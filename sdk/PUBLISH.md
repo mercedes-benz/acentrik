@@ -15,9 +15,10 @@ Here are the steps:
 6.  Alice create pricing
 
 Let's go through each step.
+### Disclaimer!!!
+Steps 6 (Alice create pricing) are still under maintainence. Currently still didn't support other baseToken other than OCEAN.
 
 ## 1. Setup
-
 ### Prerequisites
 - Alice's Wallets have Publisher Roles
 
