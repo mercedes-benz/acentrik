@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
+spec:
+  serviceName: {{ .Release.Name }}-{{ .Chart.Name }}
+  replicas: {{ .Values.replica }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-{{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-{{ .Chart.Name }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 5432
+          name: tcp
+        envFrom:
+          - secretRef:
+              name: {{ .Values.secretConfig }}
+        {{- if .Values.livenessProbe.enabled }}
+        livenessProbe:
+          tcpSocket:
+            port: tcp
+          initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+          successThreshold: {{ .Values.livenessProbe.successThreshold }}
+          failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+        {{- end }}
+        {{- if .Values.readinessProbe.enabled }}
+        readinessProbe:
+          tcpSocket:
+            port: tcp
+          initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+          successThreshold: {{ .Values.readinessProbe.successThreshold }}
+          failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+        {{- end }}
+        volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: postgredb
+            subPath: postgres
+      volumes:
+        - name: postgredb
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-{{ .Chart.Name }}-pv-claim

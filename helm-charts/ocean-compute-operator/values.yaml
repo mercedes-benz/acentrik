@@ -1,0 +1,102 @@
+## namespace
+namespace: ocean-compute
+
+## market image version
+image:
+  repository: public.ecr.aws/j0e7f6c1/oceanprotocol/operator-engine
+  tag: jobcleanup
+  ## Specify a imagePullPolicy
+  pullPolicy: Always
+
+## Set desired pod ReplicaSet
+replica: 1
+
+## Enable/Disable Kubernetes Secrets Store CSI Driver. Currently only support AWS provider.
+## ref: https://secrets-store-csi-driver.sigs.k8s.io
+## ref: https://github.com/aws/secrets-store-csi-driver-provider-aws
+secretstore:
+  enabled: false
+  provider: aws
+
+## Secret relevant values or keys, depends on secretstore flag
+secret:
+  postgres:
+    db: postgresdb
+      #objectName: parameter name
+      #objectType: "secretsmanager" or "ssmparameter"
+    user: postgresadmin
+    password: changeme
+    host: postgresql.ocean-operator.svc.cluster.local
+    port: "5432"
+  operatorPrivateKey: ""
+  aws:
+    accessKeyId:
+    secretAccessKey:
+  ipfs:
+    apiKey:
+    apiClient:
+
+## ConfigMap relevant values
+config:
+  aws:
+    enabled: false
+    region: ap-southeast-1
+    bucket:
+      output: compute-output
+      adminlogs: compute-logs
+  ipfs:
+    enabled: true
+    output: <IPFS CLUSTER PROXY API URL>
+    adminlogs: <IPFS CLUSTER PROXY API URL>
+    outputPrefix: <IPFS Gateway URL>
+    adminlogsPrefix: <IPFS Gateway URL>
+    ## expiry time must be in hour (h) or minutes (m) unit.
+    ## Default 60 days = 1440 hours
+    expiryTime: "1440h"
+  postgres:
+    db: postgresdb
+    user: postgresadmin
+    password: changeme
+    host: postgresql.ocean-operator.svc.cluster.local
+    port: "5432"
+  storageClass: standard
+  pod:
+    configurationContainer: public.ecr.aws/j0e7f6c1/oceanprotocol/pod-configuration:v1.0.9
+    publishContainer: public.ecr.aws/j0e7f6c1/oceanprotocol/pod-publishing:secure_outputs
+  log:
+    level: info
+  debug:
+    noCleanup: false
+
+
+## Configure pod resources
+# resources:
+#   limits:
+#     cpu: 500m
+#     memory: 500Mi
+#   requests:
+#     cpu: 500m
+#     memory: 500Mi
+
+storageclass:
+  enabled: false
+  name: standard
+  reclaimPolicy: Delete
+  ## AWS provisioner
+  #  provisioner: kubernetes.io/aws-ebs
+  #  parameters:
+    #  fsType: ext4
+    #  type: gp2
+    #  encrypted: "true"
+  #  allowedTopologies:
+    #  enabled: true
+    #  matchLabelExpressions:
+    #  - key: failure-domain.beta.kubernetes.io/zone
+    #    values:
+    #  - ap-southeast-1b
+
+  ## Azure provisioner
+  #  provisioner: kubernetes.io/azure-disk
+  #  parameters:
+    #  kind: Managed
+    #  storageaccounttype: StandardSSD_LRS

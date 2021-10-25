@@ -1,0 +1,24 @@
+apiVersion: v1
+data:
+  {{- if .Values.config.aws.enabled }}
+  AWS_REGION: {{ .Values.config.aws.region }}
+  AWS_BUCKET_OUTPUT: {{ .Values.config.aws.bucket.output }}
+  AWS_BUCKET_ADMINLOGS: {{ .Values.config.aws.bucket.adminlogs }}
+  {{- end }}
+  {{- if .Values.config.ipfs.enabled }}
+  IPFS_OUTPUT: {{ .Values.config.ipfs.output }}
+  IPFS_ADMINLOGS: {{ .Values.config.ipfs.adminlogs }}
+  IPFS_OUTPUT_PREFIX: {{ .Values.config.ipfs.outputPrefix }}
+  IPFS_ADMINLOGS_PREFIX: {{ .Values.config.ipfs.adminlogsPrefix }}
+  IPFS_EXPIRY_TIME: {{ .Values.config.ipfs.expiryTime | quote }}
+  {{- end }}
+  STORAGE_CLASS: {{ .Values.config.storageClass }}
+  POD_CONFIGURATION_CONTAINER: {{ .Values.config.pod.configurationContainer }}
+  POD_PUBLISH_CONTAINER: {{ .Values.config.pod.publishContainer }}
+  LOG_LEVEL: {{ .Values.config.log.level }}
+kind: ConfigMap
+metadata:
+  annotations:
+  labels:
+    app: {{ .Release.Name }}
+  name: {{ .Release.Name }}-config

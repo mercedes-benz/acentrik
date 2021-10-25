@@ -1,0 +1,21 @@
+{{- if .Values.storageclass.enabled }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ .Values.storageclass.name }}
+parameters:
+  {{- range $key, $value := .Values.storageclass.parameters }}
+  {{ $key }}: {{ $value }}
+  {{- end }}
+provisioner: {{ .Values.storageclass.provisioner }}
+reclaimPolicy: {{ .Values.storageclass.reclaimPolicy }}
+volumeBindingMode: Immediate
+{{- if .Values.storageclass.allowedTopologies.enabled }}
+allowedTopologies:
+- matchLabelExpressions:
+{{- range .Values.storageclass.allowedTopologies.matchLabelExpressions }}
+  - key: {{ .key }}
+    values: {{ .values }}
+{{- end }}
+{{- end }}
+{{- end }}

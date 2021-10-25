@@ -1,0 +1,20 @@
+apiVersion: v1
+data:
+  OPERATOR_ADDRESS: {{ .Values.config.operatorAddress }}
+  ALGO_POD_TIMEOUT: {{ .Values.config.algoPodTimeout | quote }}
+  SIGNATURE_REQUIRED: {{ .Values.config.signatureRequired | quote }}
+  ALLOWED_PROVIDERS: {{ .Values.config.allowedProviders | quote }}
+  DEFAULT_NAMESPACE: {{ .Values.config.defaultNamespace | quote }}
+  INPUT_VOLUME_SIZE: {{ .Values.config.resource.inputVolumeSize | quote }}
+  OUTPUT_VOLUME_SIZE: {{ .Values.config.resource.outputVolumeSize | quote }}
+  ADMIN_LOGS_VOLUME_SIZE: {{ .Values.config.resource.adminLogsVolumeSize | quote }}
+  REQUESTS_CPU: {{ .Values.config.resource.requestsCpu | quote }}
+  REQUESTS_MEMORY: {{ .Values.config.resource.requestsMemory | quote }}
+  LIMITS_CPU: {{ .Values.config.resource.limitsCpu | quote }}
+  LIMITS_MEMORY: {{ .Values.config.resource.limitsMemory | quote }}
+kind: ConfigMap
+metadata:
+  annotations:
+  labels:
+    app: {{ .Release.Name }}
+  name: {{ .Release.Name }}-config
