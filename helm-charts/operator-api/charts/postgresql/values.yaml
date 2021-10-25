@@ -1,0 +1,60 @@
+## market image version
+image:
+  repository: public.ecr.aws/j0e7f6c1/library/postgres
+  tag: 10.4
+  ## Specify a imagePullPolicy
+  pullPolicy: IfNotPresent
+
+## Set desired pod ReplicaSet
+replica: 1
+
+## Secret object from parent
+secretConfig: operator-api-secret-config
+
+## Configure extra options for liveness and readiness probes
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes)
+livenessProbe:
+  enabled: false
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 1
+  failureThreshold: 10
+  successThreshold: 1
+readinessProbe:
+  enabled: false
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 1
+  failureThreshold: 10
+  successThreshold: 1
+
+## Persistence Volume Claims and Persistent Volume relevant settings
+persistence:
+  storageClassName: standard
+  size: 5Gi
+  accessMode: ReadWriteOnce
+
+storageclass:
+  enabled: false
+  name: standard
+  reclaimPolicy: Delete
+  ## AWS provisioner
+  #  provisioner: kubernetes.io/aws-ebs
+  #  parameters:
+    #  fsType: ext4
+    #  type: gp2
+  #  allowedTopologies:
+    #  enabled: true
+    #  matchLabelExpressions:
+    #  - key: topology.kubernetes.io/zone
+    #    values:
+    #    - ap-southeast-1b
+    #  - key: failure-domain.beta.kubernetes.io/zone
+    #    values:
+    #  - ap-southeast-1b
+
+  ## Azure provisioner
+  #  provisioner: kubernetes.io/azure-disk
+  #  parameters:
+    #  kind: Managed
+    #  storageaccounttype: StandardSSD_LRS

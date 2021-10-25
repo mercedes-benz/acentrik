@@ -1,0 +1,35 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    {{- if .Values.ingress.certManager }}
+    kubernetes.io/tls-acme: "true"
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  name: {{ $.Release.Name }}
+spec:
+  rules:
+  {{- range .Values.ingress.hosts }}
+  - host: {{ .name }}
+    http:
+      paths:
+      - path: {{ default "/" .path }}
+        backend:
+          service:
+            name: {{ $.Release.Name }}
+            port:
+              number: 8030
+        pathType: ImplementationSpecific
+  {{- end }}
+  tls:
+{{- range .Values.ingress.hosts }}
+  - hosts:
+{{- if .tls }}
+    - {{ .name }}
+    secretName: {{ .tlsSecret }}
+{{- end }}
+{{- end }}
+{{- end }}
