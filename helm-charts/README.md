@@ -81,7 +81,7 @@ public.ecr.aws/j0e7f6c1
   - Example: afdfd9c3d2095ef696594f6cedcae59e72dcd697e2a7521b1578140422a4f890
   - As standard, the key will be stored as Kubernetes Secret. However, it is possible to integrate with an external secret provider depends on your distributed architecture infrastructure setup
 
-\*\* Aquarius URL refer to https://aquarius.<network>.acentrik.io
+\*\* Aquarius URL refer to https://aquarius.<network\>.acentrik.io
 
 **Steps**
 
@@ -145,7 +145,7 @@ helm upgrade operator-api ./ \
 | config.aws.enabled                 | Allowed AWS S3 bucket for compute data storage                                                              |
 | secret.aws.accessKeyId             | AWS IAM user account access key ID to access S3 bucket                                                      |
 | secret.aws.secretAccessKey         | AWS IAM user account access secret key to access S3 bucket                                                  |
-| config.aws.bucket.output           | CS3 bucket to store compute output files                                                                    |
+| config.aws.bucket.output           | S3 bucket to store compute output files                                                                     |
 | config.aws.bucket.adminlogs        | S3 bucket to store compute log files                                                                        |
 | config.ipfs.enabled                | Allowed IPFS for compute data storage. Note: By enable ipfs, it will always override AWS S3 storage option. |
 | config.ipfs.output                 | IPFS API endpoint to store compute output files                                                             |
