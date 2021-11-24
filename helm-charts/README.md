@@ -1,22 +1,6 @@
 # Edge Node Guidelines and Setup Instructions
 
-Edge Nodes (Providers) allow organizations to connect to the marketplace for secured connectivity to private data endpoints and run compute jobs on data within their control.
-
-Edge Nodes can be hosted on any Kubernetes environment such as AWS, Azure, Alibaba Cloud, Cloud Mobility, DHC CaaS or within their own datacenters.
-
-![Edge Node](./image_edge_node.png)
-
-An edge node setup consists of the following components:
-
-- **Provider** - An interface that is in charge of interacting with users and integrate the Compute-to-Data infrastructure into Acentrik.
-- **Operator-Service** - Micro-service that is handling the compute requests.
-- **Operator-Engine** - The computing systems where the compute jobs will be executed.
-
-<br />
-
-## Setting up Edge Computing Nodes on a Distributed Architecture
-
-### Prerequisites
+## Prerequisites
 
 First, the following resources are required for a proper runtime environment setup:
 
@@ -39,11 +23,11 @@ First, the following resources are required for a proper runtime environment set
 
 Deploy the following helm chart with appropriate customized values. The download links for each helm charts will be provided.
 
-|     | Helm Chart             | Recommended Namespace          | Right Aligned                                                                       |
-| :-- | :--------------------- | :----------------------------- | ----------------------------------------------------------------------------------- |
-| 1   | provider               | network specific, e.g. rinkeby | An Ethereum network-specific deployment object to serve an interface to Marketplace |
-| 2   | operator-api           | ocean-operator                 | An Ethereum network-independent deployment object to manage all C2D requests        |
-| 3   | ocean-compute-operator | ocean-compute                  | An Ethereum network-independent deployment object to execute the actual C2D jobs    |
+|     | Helm Chart                                         | Recommended Namespace          | Right Aligned                                                                       |
+| :-- | :------------------------------------------------- | :----------------------------- | ----------------------------------------------------------------------------------- |
+| 1   | [provider](./provider)                             | network specific, e.g. rinkeby | An Ethereum network-specific deployment object to serve an interface to Marketplace |
+| 2   | [operator-api](./operator-api)                     | ocean-operator                 | An Ethereum network-independent deployment object to manage all C2D requests        |
+| 3   | [ocean-compute-operator](./ocean-compute-operator) | ocean-compute                  | An Ethereum network-independent deployment object to execute the actual C2D jobs    |
 
 Note: Modify the helm charts according on your own Kubernetes cluster setup when necessary. Alternatively you can deploy the standard Kubernetes yaml objects.
 
@@ -63,7 +47,7 @@ public.ecr.aws/j0e7f6c1
 
 <br />
 
-### Customize your Provider deployment
+## Customize your Provider deployment
 
 | Variable                    | Description                                                                                |
 | --------------------------- | ------------------------------------------------------------------------------------------ |
@@ -98,7 +82,7 @@ helm upgrade provider ./ \
 
 <br />
 
-### Customize your Operator Service deployment
+## Customize your Operator Service deployment
 
 | Variable                            | Description                                                                                                       |
 | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -132,7 +116,7 @@ helm upgrade operator-api ./ \
 
 <br />
 
-### Customize your Compute Engine deployment
+## Customize your Compute Engine deployment
 
 | Variable                           | Description                                                                                                 |
 | ---------------------------------- | ----------------------------------------------------------------------------------------------------------- |
@@ -193,19 +177,4 @@ OPERATOR_SERVICE_URL: http://operator-api.ocean-operator.svc.cluster.local:8050
 
 <br />
 
-## Connecting the Edge Nodes into the Marketplace via Provider Endpoint
-
-The marketplace connects to the edge nodes via providers. Once the infrastructure setup is done, provide the public provider endpoint to Acentrik's Onboarding team for adding to trusted providers list.
-
-Through Role-based access control, all users in the marketplace are tagged to their Company. Other than the Marketplace' default provider which is visible to all users, users within a particular Company should only be able to see and use their own custom providers when publishing data assets. A company can also have multiple custom providers based on their requirement.
-
-<br />
-
-## Guidelines for Edge Node Setup :
-
-- By default, the private key file of the wallet provider is stored in Kubernetes Secret. However, you may also explore external alternative solutions like AWS Secrets Manager, Azure Key Vault, Cyberark, Conjur, etc.
-- Provider endpoints MUST be publicly accessible.
-- Store your data files securely using your own file server solutions such as S3 or Dropbox. Make sure your data files should only be reachable by your own provider and Compute-to-Data (C2D) engine.
-- You are responsible for your own infrastructure security: adapt the own best practices of your Cloud Service providers or your on-premise infrastructure.
-- You are responsible for upgrading the Provider version upon notification from Platform Team.
-- Edge Nodes should only have Firewalls opened to only relevant Data endpoints and network to reduce the risk of connectivity to wider network.
+For more information, refer to: https://support.acentrik.io/help/en-us/10/10
