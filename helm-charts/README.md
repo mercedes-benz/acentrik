@@ -47,7 +47,7 @@ public.ecr.aws/j0e7f6c1
 
 <br />
 
-## Customize your Provider deployment
+## [Customize your Provider deployment](./provider)
 
 | Variable                    | Description                                                                                |
 | --------------------------- | ------------------------------------------------------------------------------------------ |
@@ -82,7 +82,7 @@ helm upgrade provider ./ \
 
 <br />
 
-## Customize your Operator Service deployment
+## [Customize your Operator Service deployment](./operator-api)
 
 | Variable                            | Description                                                                                                       |
 | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -116,7 +116,7 @@ helm upgrade operator-api ./ \
 
 <br />
 
-## Customize your Compute Engine deployment
+## [Customize your Compute Engine deployment](./ocean-compute-operator)
 
 | Variable                           | Description                                                                                                 |
 | ---------------------------------- | ----------------------------------------------------------------------------------------------------------- |
@@ -176,5 +176,7 @@ OPERATOR_SERVICE_URL: http://operator-api.ocean-operator.svc.cluster.local:8050
 ```
 
 <br />
+
+### Best Practice
 
 For more information, refer to: https://support.acentrik.io/help/en-us/10/10
