@@ -25,11 +25,11 @@ Create an asset_info.json file and filled up the asset details
 
 ```
 {
-  "network": "https://rinkeby.infura.io/v3/XXX",
-  "networkName": "rinkeby",
-  "networkID": 4,
+  "network": "https://matic-mainnet.chainstacklabs.com",
+  "networkName": "polygon",
+  "networkID": 137,
   "metadataCacheUri": "https://aquarius.acentrik.io",
-  "providerUri": "https://provider.rinkeby.acentrik.io",
+  "providerUri": "https://provider.polygon.acentrik.io",
   "assetTokenAddress": "0x8748ef04C53974821F1174749c4B7A9486dbad19",
   "assetDid": "did:op:8748ef04C53974821F1174749c4B7A9486dbad19",
   "assetOwnerAddress": "0x2eCA8718b2fCaf0CF9E150ad4B44EE8c54473D2C",
