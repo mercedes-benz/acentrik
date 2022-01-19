@@ -1,45 +1,42 @@
 # SDK (Ocean.py)
+
 Python library to privately & securely publish and consume data on Acentrik
 
-
 With ocean.py, you can:
+
 - **Publish** data services: downloadable files or compute-to-data, datatoken for each dataset / data service.
 - **Mint** datatokens for the service
 - **Sell** datatokens for a fixed price
 - **Consume** datatokens, to access the service
 
 ## Setup
+
 ### Prerequisites
+
 - Python 3.8.5+
-- Aquarius URL v3.1.1+
-- Provider URL v0.4.16+
-- Ocean.py  
-    - Either install using (pip install 'ocean-lib>= 0.8.5')
-    - or pull latest ocean.py code (https://github.com/oceanprotocol/ocean.py) & build it (pip install  ./ocean.py/ ) 
-
-
+- Ocean.py
+  - Either install using (pip install 'ocean-lib>= 0.8.5')
+  - or pull latest ocean.py code (https://github.com/oceanprotocol/ocean.py) & build it (pip install ./ocean.py/ )
 - Create a config.ini and fill in as below (Example are with Rinkeby network)
+  - You are able to get the required details on Acentrik Developers Details Section
+
 ```
 [eth-network]
-network = https://rinkeby.infura.io/v3/d64c34d769c64cbd80c39d3f25XXXXXX # RPC URL
+network = https://rinkeby.infura.io/v3/XXXX #network
+network_name = rinkeby  #networkName
+chain_id = 4  #networkID
+
 address.file =  /home/ubuntu/contracts-artifacts/address.json
- 
-; If polygon network
-; chain_id = 137
-; network_name = polygon
-; network = https://matic-mainnet.chainstacklabs.com/ # RPC URL
-; block_confirmations = 15
-; transaction_timeout = 600
- 
- [resources]
-metadata_cache_uri = https://aquarius.acentrik.io
-provider.url = https://provider.rinkeby.acentrik.io
-provider.address = https://provider.rinkeby.acentrik.io
- 
+
+[resources]
+metadata_cache_uri = https://aquarius.acentrik.io  #metadataCacheUri
+provider.url = https://provider.rinkeby.acentrik.io  #providerUri
+provider.address = https://provider.rinkeby.acentrik.io  #providerUri
 downloads.path = /home/ubuntu/download-path/
 ```
 
-- Clone address file from [ocean contract repo](https://github.com/oceanprotocol/contracts/blob/main/artifacts/address.json), then edit it's FixedRateExchange values (For Rinkeby & Polygon) 
+- Clone address file from [ocean contract repo](https://github.com/oceanprotocol/contracts/blob/main/artifacts/address.json), then edit it's FixedRateExchange values (For Rinkeby & Polygon)
+  - This is the address.file that you filled in on config.ini
 
 ```
 "rinkeby": {
@@ -65,16 +62,14 @@ downloads.path = /home/ubuntu/download-path/
 ```
 
 - Set Env variable in your work console
+
 ```
-#set private keys of two accounts (Alice & Bob)
+#set private keys (Alice & Bob)
 export TEST_PRIVATE_KEY1=0xbbfbee4961061d506ffbb11dfea64eba16355cbf1d9c29613126ba7fecXXXXXX
 export TEST_PRIVATE_KEY2=0x804365e293b9fab9bd11bddd39082396d56d30779efbb3ffb0a6089027XXXXXX
- 
-export OCEAN_NETWORK_URL=https://rinkeby.infura.io/v3/d64c34d769c64cbd80c39d3f25XXXXXX
-export ADDRESS_FILE=/home/ubuntu/contracts-artifacts/address.json
 ```
 
-
 ## Relevant Docs (Ocean)
+
 - Fixed Rate Exchange Flow : https://github.com/oceanprotocol/ocean.py/blob/main/READMEs/fixed-rate-exchange-flow.md
 - Compute-to-Data (C2D) Flow: https://github.com/oceanprotocol/ocean.py/blob/main/READMEs/c2d-flow.md
