@@ -17,7 +17,7 @@ With ocean.py, you can:
 - Ocean.py
   - Either install using (pip install 'ocean-lib>= 0.8.5')
   - or pull latest ocean.py code (https://github.com/oceanprotocol/ocean.py) & build it (pip install ./ocean.py/ )
-- Create a config.ini and fill in as below (Example are with Rinkeby network)
+- Create a config.ini and fill in as below (Example are with Polygon network)
   - You are able to get the required details from Acentrik Developers Details Section
     ![Copy info clipboard](./copy_info_clipboard.gif)
 
