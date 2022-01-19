@@ -18,20 +18,21 @@ With ocean.py, you can:
   - Either install using (pip install 'ocean-lib>= 0.8.5')
   - or pull latest ocean.py code (https://github.com/oceanprotocol/ocean.py) & build it (pip install ./ocean.py/ )
 - Create a config.ini and fill in as below (Example are with Rinkeby network)
-  - You are able to get the required details on Acentrik Developers Details Section
+  - You are able to get the required details from Acentrik Developers Details Section
+    ![Copy info clipboard](./copy_info_clipboard.gif)
 
 ```
 [eth-network]
-network = https://rinkeby.infura.io/v3/XXXX #network
-network_name = rinkeby  #networkName
-chain_id = 4  #networkID
+network = https://matic-mainnet.chainstacklabs.com #network
+network_name = polygon  #networkName
+chain_id = 137  #networkID
 
 address.file =  /home/ubuntu/contracts-artifacts/address.json
 
 [resources]
 metadata_cache_uri = https://aquarius.acentrik.io  #metadataCacheUri
-provider.url = https://provider.rinkeby.acentrik.io  #providerUri
-provider.address = https://provider.rinkeby.acentrik.io  #providerUri
+provider.url = https://provider.polygon.acentrik.io  #providerUri
+provider.address = https://provider.polygon.acentrik.io  #providerUri
 downloads.path = /home/ubuntu/download-path/
 ```
 
