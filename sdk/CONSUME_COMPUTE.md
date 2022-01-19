@@ -2,15 +2,15 @@
 
 This quickstart describes consuming Compute-to-Data flow.
 
-It focuses on Bob's experience as a consumer
+It focuses on ConsumerA's experience as a consumer
 
 Here are the steps:
 
 1.  Setup
-2.  Bob buys data tokens (for data and algorithm) (Free or Fixed)
-3.  Bob sends his datatoken to the service
-4.  Bob starts a compute job
-5.  Bob monitors logs / algorithm output
+2.  ConsumerA buys data tokens (for data and algorithm) (Free or Fixed)
+3.  ConsumerA sends his datatoken to the service
+4.  ConsumerA starts a compute job
+5.  ConsumerA monitors logs / algorithm output
 
 Let's go through each step.
 
@@ -18,7 +18,7 @@ Let's go through each step.
 
 ### Prerequisites
 
-- Bob's Wallets have Consumer roles
+- ConsumerA's Wallets have Consumer roles
 - Asset Information Json file
 
 Create an asset_info.json file and filled up the asset details
@@ -38,6 +38,14 @@ Create an asset_info.json file and filled up the asset details
   "algorithmOwnerAddress": "0x500DB43EE6966e6213BA58EAF152dA593EB7432e"
 }
 ```
+
+<br />
+
+![Copy info clipboard](./copy_info_clipboard.gif)
+
+<em>Copy the asset details from Acentrik developer details section</em>
+
+<br />
 
 In the Python console:
 
@@ -78,55 +86,50 @@ algo_token_owner_address = data_asset_info["algorithmOwnerAddress"]
 
 <br />
 
-## 2. Bob buys data tokens (for data and algorithm)
+## 2. ConsumerA buys data tokens (for data and algorithm)
 
 ### If the Asset is Fixed Price
 
 In the same python console (Fixed Pricing Asset):
 
 ```python
-# Check bob have enough ETH
-
-bob_wallet = Wallet(ocean.web3, os.getenv('TEST_PRIVATE_KEY2'), config.block_confirmations,  config.transaction_timeout)
-
-#Verify that Bob has ETH
-assert ocean.web3.eth.get_balance(bob_wallet.address) > 0, "need ETH"
+consumer_A_wallet = Wallet(ocean.web3, os.getenv('TEST_PRIVATE_KEY2'), config.block_confirmations,  config.transaction_timeout)
 
 # ============================================================================================
-# Bob buys data tokens
+# ConsumerA buys data tokens
 
 data_token = ocean.get_data_token(data_token_address)
 logs = ocean.exchange.search_exchange_by_data_token(data_token_address)
 data_fre_exchange_id = logs[0].args.exchangeId
 ocean.exchange.buy_at_fixed_rate(
     amount=to_wei(1), # buy 1.0 datatoken
-    wallet=bob_wallet,
+    wallet=consumer_A_wallet,
     max_OCEAN_amount=to_wei(25), # pay up to 25.0 OCEAN
     exchange_id=data_fre_exchange_id,
     data_token=data_token_address,
     exchange_owner=data_token_owner_address,
 )
 
-assert data_token.balanceOf(bob_wallet.address) >= 1.0, "Bob didn't get 1.0 datatokens"
-print(f"data token in bob wallet = '{data_token.balanceOf(bob_wallet.address)}'")
+assert data_token.balanceOf(consumer_A_wallet.address) >= 1.0, "ConsumerA didn't get 1.0 datatokens"
+print(f"data token in ConsumerA wallet = '{data_token.balanceOf(consumer_A_wallet.address)}'")
 
 # ============================================================================================
-# Bob buys algo tokens
+# ConsumerA buys algo tokens
 
 algo_token = ocean.get_data_token(algo_token_address)
 logs = ocean.exchange.search_exchange_by_data_token(algo_token_address)
 algo_fre_exchange_id = logs[0].args.exchangeId
 ocean.exchange.buy_at_fixed_rate(
     amount=to_wei(1), # buy 1.0 datatoken
-    wallet=bob_wallet,
+    wallet=consumer_A_wallet,
     max_OCEAN_amount=to_wei(25), # pay up to 25.0 OCEAN
     exchange_id=algo_fre_exchange_id,
     data_token=data_token_address,
     exchange_owner=algo_token_owner_address,
 )
 
-assert algo_token.balanceOf(bob_wallet.address) >= 1.0, "Bob didn't get 1.0 datatokens"
-print(f"algo token in bob wallet = '{algo_token.balanceOf(bob_wallet.address)}'")
+assert algo_token.balanceOf(consumer_A_wallet.address) >= 1.0, "ConsumerA didn't get 1.0 datatokens"
+print(f"algo token in ConsumerA wallet = '{algo_token.balanceOf(consumer_A_wallet.address)}'")
 ```
 
 <br />
@@ -136,15 +139,10 @@ print(f"algo token in bob wallet = '{algo_token.balanceOf(bob_wallet.address)}'"
 In the same python console (Free Pricing Asset):
 
 ```python
-# Check bob have enough ETH
-
-bob_wallet = Wallet(ocean.web3, os.getenv('TEST_PRIVATE_KEY2'), config.block_confirmations,  config.transaction_timeout)
-
-#Verify that Bob has ETH
-assert ocean.web3.eth.get_balance(bob_wallet.address) > 0, "need ETH"
+consumer_A_wallet = Wallet(ocean.web3, os.getenv('TEST_PRIVATE_KEY2'), config.block_confirmations,  config.transaction_timeout)
 
 # ============================================================================================
-# Bob dispense data tokens
+# ConsumerA dispense data tokens
 
 data_token = ocean.get_data_token(data_token_address)
 
@@ -152,37 +150,37 @@ contracts_addresses = get_contracts_addresses(config.network_name, config.addres
 assert contracts_addresses, "invalid network."
 
 dispenser_address = contracts_addresses["Dispenser"]
-dispenser = DispenserContract(bob_wallet.web3, dispenser_address)
+dispenser = DispenserContract(consumer_A_wallet.web3, dispenser_address)
 assert dispenser.is_active(data_token_address), f"dispenser is not active for {data_token_address} data token. It its not free priced. "
 
 #Dispense
-tx_result = dispenser.dispense(data_token_address, to_wei(1), bob_wallet)
+tx_result = dispenser.dispense(data_token_address, to_wei(1), consumer_A_wallet)
 assert tx_result, "failed to dispense data tokens."
 print(f"tx_result = '{tx_result}'")
 
-assert data_token.balanceOf(bob_wallet.address) >= 1.0, "Bob didn't get 1.0 datatokens"
-print(f"data token in bob wallet = '{data_token.balanceOf(bob_wallet.address)}'")
+assert data_token.balanceOf(consumer_A_wallet.address) >= 1.0, "ConsumerA didn't get 1.0 datatokens"
+print(f"data token in ConsumerA wallet = '{data_token.balanceOf(consumer_A_wallet.address)}'")
 
 # ============================================================================================
-# Bob dispense algo tokens
+# ConsumerA dispense algo tokens
 
 algo_token = ocean.get_data_token(algo_token_address)
 
 assert dispenser.is_active(algo_token_address), f"dispenser is not active for {algo_token_address} algo token. It its not free priced. "
 
 #Dispense
-tx_result = dispenser.dispense(algo_token_address, to_wei(1), bob_wallet)
+tx_result = dispenser.dispense(algo_token_address, to_wei(1), consumer_A_wallet)
 assert tx_result, "failed to dispense algo tokens."
 print(f"tx_result = '{tx_result}'")
 
 
-assert algo_token.balanceOf(bob_wallet.address) >= 1.0, "Bob didn't get 1.0 datatokens"
-print(f"algo token in bob wallet = '{algo_token.balanceOf(bob_wallet.address)}'")
+assert algo_token.balanceOf(consumer_A_wallet.address) >= 1.0, "ConsumerA didn't get 1.0 datatokens"
+print(f"algo token in ConsumerA wallet = '{algo_token.balanceOf(consumer_A_wallet.address)}'")
 ```
 
 <br />
 
-## 3. Bob sends his datatoken to the service
+## 3. ConsumerA sends his datatoken to the service
 
 In the same python console:
 
@@ -198,7 +196,7 @@ from ocean_lib.models.compute_input import ComputeInput
 
 # order & pay for dataset
 dataset_order_requirements = ocean.assets.order(
-    DATA_did, bob_wallet.address, service_type=compute_service.type
+    DATA_did, consumer_A_wallet.address, service_type=compute_service.type
 )
 DATA_order_tx_id = ocean.assets.pay_for_service(
         ocean.web3,
@@ -207,14 +205,14 @@ DATA_order_tx_id = ocean.assets.pay_for_service(
         DATA_did,
         compute_service.index,
         ZERO_ADDRESS,
-        bob_wallet,
+        consumer_A_wallet,
         dataset_order_requirements.computeAddress,
     )
 print(f"DATA_order_tx_id: {DATA_order_tx_id}")
 
 # order & pay for algo
 algo_order_requirements = ocean.assets.order(
-    ALG_did, bob_wallet.address, service_type=algo_service.type
+    ALG_did, consumer_A_wallet.address, service_type=algo_service.type
 )
 ALG_order_tx_id = ocean.assets.pay_for_service(
         ocean.web3,
@@ -223,7 +221,7 @@ ALG_order_tx_id = ocean.assets.pay_for_service(
         ALG_did,
         algo_service.index,
         ZERO_ADDRESS,
-        bob_wallet,
+        consumer_A_wallet,
         algo_order_requirements.computeAddress,
 )
 print(f"ALG_order_tx_id: {ALG_order_tx_id}")
@@ -232,7 +230,7 @@ print(f"ALG_order_tx_id: {ALG_order_tx_id}")
 
 <br />
 
-## 4. Bob starts a compute job
+## 4. ConsumerA starts a compute job
 
 In the same python console:
 
@@ -241,7 +239,7 @@ In the same python console:
 compute_inputs = [ComputeInput(DATA_did, DATA_order_tx_id, compute_service.index)]
 job_id = ocean.compute.start(
     compute_inputs,
-    bob_wallet,
+    consumer_A_wallet,
     algorithm_did=ALG_did,
     algorithm_tx_id=ALG_order_tx_id,
     algorithm_data_token=algo_token_address
@@ -251,17 +249,17 @@ print(f"Started compute job with id: {job_id}")
 
 <br />
 
-## 5. Bob monitors logs / algorithm output
+## 5. ConsumerA monitors logs / algorithm output
 
 In the same python console:
 
 ```python
-# Bob check job status
-print(ocean.compute.status(DATA_did, job_id, bob_wallet))
+# ConsumerA check job status
+print(ocean.compute.status(DATA_did, job_id, consumer_A_wallet))
 
 # ============================================================================================
-# Bob get result (After job finished)
+# ConsumerA get result (After job finished)
 
-result_file = ocean.compute.result_file(DATA_did, job_id, 0, bob_wallet)  # 0 index, means we retrieve the results from the first dataset index
+result_file = ocean.compute.result_file(DATA_did, job_id, 0, consumer_A_wallet)  # 0 index, means we retrieve the results from the first dataset index
 print(result_file)
 ```
