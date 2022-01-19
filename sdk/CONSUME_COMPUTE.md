@@ -1,4 +1,3 @@
-
 # Quickstart: Consume Compute-to-Data Flow (Fixed Rate Exchange)
 
 This quickstart describes consuming Compute-to-Data flow.
@@ -8,7 +7,7 @@ It focuses on Bob's experience as a consumer
 Here are the steps:
 
 1.  Setup
-2.  Bob buys data tokens (for data and algorithm)
+2.  Bob buys data tokens (for data and algorithm) (Free or Fixed)
 3.  Bob sends his datatoken to the service
 4.  Bob starts a compute job
 5.  Bob monitors logs / algorithm output
@@ -18,61 +17,84 @@ Let's go through each step.
 ## 1. Setup
 
 ### Prerequisites
+
 - Bob's Wallets have Consumer roles
-- Dataset & Algo did
-- Dataset & Algo token address
-- Dataset & Algo token owner's wallet address
+- Asset Information Json file
+
+Create an asset_info.json file and filled up the asset details
+
+```
+{
+  "network": "https://rinkeby.infura.io/v3/XXX",
+  "networkName": "rinkeby",
+  "networkID": 4,
+  "metadataCacheUri": "https://aquarius.acentrik.io",
+  "providerUri": "https://provider.rinkeby.acentrik.io",
+  "assetTokenAddress": "0x8748ef04C53974821F1174749c4B7A9486dbad19",
+  "assetDid": "did:op:8748ef04C53974821F1174749c4B7A9486dbad19",
+  "assetOwnerAddress": "0x2eCA8718b2fCaf0CF9E150ad4B44EE8c54473D2C",
+  "algorithmTokenAddress": "0xe75a2Ca6D9b184d9807A1A1B5AE9BE57e9c897cD",
+  "algorithmDid": "did:op:e75a2Ca6D9b184d9807A1A1B5AE9BE57e9c897cD",
+  "algorithmOwnerAddress": "0x500DB43EE6966e6213BA58EAF152dA593EB7432e"
+}
+```
 
 In the Python console:
+
 ```python
 #create ocean instance
 from web3.main import Web3
 from ocean_lib.ocean.ocean import Ocean
 from ocean_lib.web3_internal.currency import from_wei, to_wei
 from ocean_lib.config import Config
- 
+from ocean_lib.models.dispenser import DispenserContract
+from ocean_lib.web3_internal.contract_utils import get_contracts_addresses
+import json
+
 print(f"ocean.exchange._exchange_address = '{ocean.exchange._exchange_address}'")
 print(f"config.network_url = '{config.network_url}'")
 print(f"config.block_confirmations = {config.block_confirmations.value}")
 print(f"config.metadata_cache_uri = '{config.metadata_cache_uri}'")
 print(f"config.provider_url = '{config.provider_url}'")
- 
+
 config = Config('config.ini')
 ocean = Ocean(config)
 import os
 from ocean_lib.web3_internal.wallet import Wallet
- 
-usdc_address = "0x4DBCdF9B62e891a7cec5A2568C3F4FAF9E8Abe2b" # rinkeby usdc address
-#usdc_address = "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174" # polygon usdc address
- 
-DATA_did = "did:op:Dd02a7b29B5C654378d39DCc9532aB3B5a77BD8a"
-data_token_address =  "0xDd02a7b29B5C654378d39DCc9532aB3B5a77BD8a"
-data_token_owner_address = "0x9Bf750b5465a51689fA4235aAc1F37EC692ef7b4"
- 
-ALG_did = "did:op:b4C10A8767269F6Da1C5701e11e7EBE2E9303F05"
-algo_token_address = "0xb4C10A8767269F6Da1C5701e11e7EBE2E9303F05"
-algo_token_owner_address = "0x500DB43EE6966e6213BA58EAF152dA593EB7432e"
+
+# Read asset_info.json file
+asset_info = open('asset_info.json')
+data_asset_info = json.load(asset_info)
+asset_info.close()
+
+DATA_did = data_asset_info["assetDid"]
+data_token_address =  data_asset_info["assetTokenAddress"]
+data_token_owner_address = data_asset_info["assetOwnerAddress"]
+
+ALG_did = data_asset_info["algorithmDid"]
+algo_token_address = data_asset_info["algorithmTokenAddress"]
+algo_token_owner_address = data_asset_info["algorithmOwnerAddress"]
 ```
 
+<br />
+
 ## 2. Bob buys data tokens (for data and algorithm)
-In the same python console:
+
+### If the Asset is Fixed Price
+
+In the same python console (Fixed Pricing Asset):
+
 ```python
-# Check bob have enough ETH & USDC
- 
+# Check bob have enough ETH
+
 bob_wallet = Wallet(ocean.web3, os.getenv('TEST_PRIVATE_KEY2'), config.block_confirmations,  config.transaction_timeout)
- 
-from ocean_lib.models.btoken import BToken #BToken is ERC20
-USDC_token = BToken(ocean.web3, usdc_address)
- 
-#Verify that Bob has USDC
-assert USDC_token.balanceOf(bob_wallet.address) > 0, "need USDC"
- 
+
 #Verify that Bob has ETH
 assert ocean.web3.eth.get_balance(bob_wallet.address) > 0, "need ETH"
- 
+
 # ============================================================================================
 # Bob buys data tokens
- 
+
 data_token = ocean.get_data_token(data_token_address)
 logs = ocean.exchange.search_exchange_by_data_token(data_token_address)
 data_fre_exchange_id = logs[0].args.exchangeId
@@ -84,13 +106,13 @@ ocean.exchange.buy_at_fixed_rate(
     data_token=data_token_address,
     exchange_owner=data_token_owner_address,
 )
- 
+
 assert data_token.balanceOf(bob_wallet.address) >= 1.0, "Bob didn't get 1.0 datatokens"
 print(f"data token in bob wallet = '{data_token.balanceOf(bob_wallet.address)}'")
- 
+
 # ============================================================================================
 # Bob buys algo tokens
- 
+
 algo_token = ocean.get_data_token(algo_token_address)
 logs = ocean.exchange.search_exchange_by_data_token(algo_token_address)
 algo_fre_exchange_id = logs[0].args.exchangeId
@@ -102,24 +124,78 @@ ocean.exchange.buy_at_fixed_rate(
     data_token=data_token_address,
     exchange_owner=algo_token_owner_address,
 )
- 
+
 assert algo_token.balanceOf(bob_wallet.address) >= 1.0, "Bob didn't get 1.0 datatokens"
 print(f"algo token in bob wallet = '{algo_token.balanceOf(bob_wallet.address)}'")
 ```
 
+<br />
+
+### If the Asset is Free Price
+
+In the same python console (Free Pricing Asset):
+
+```python
+# Check bob have enough ETH
+
+bob_wallet = Wallet(ocean.web3, os.getenv('TEST_PRIVATE_KEY2'), config.block_confirmations,  config.transaction_timeout)
+
+#Verify that Bob has ETH
+assert ocean.web3.eth.get_balance(bob_wallet.address) > 0, "need ETH"
+
+# ============================================================================================
+# Bob dispense data tokens
+
+data_token = ocean.get_data_token(data_token_address)
+
+contracts_addresses = get_contracts_addresses(config.network_name, config.address_file)
+assert contracts_addresses, "invalid network."
+
+dispenser_address = contracts_addresses["Dispenser"]
+dispenser = DispenserContract(bob_wallet.web3, dispenser_address)
+assert dispenser.is_active(data_token_address), f"dispenser is not active for {data_token_address} data token. It its not free priced. "
+
+#Dispense
+tx_result = dispenser.dispense(data_token_address, to_wei(1), bob_wallet)
+assert tx_result, "failed to dispense data tokens."
+print(f"tx_result = '{tx_result}'")
+
+assert data_token.balanceOf(bob_wallet.address) >= 1.0, "Bob didn't get 1.0 datatokens"
+print(f"data token in bob wallet = '{data_token.balanceOf(bob_wallet.address)}'")
+
+# ============================================================================================
+# Bob dispense algo tokens
+
+algo_token = ocean.get_data_token(algo_token_address)
+
+assert dispenser.is_active(algo_token_address), f"dispenser is not active for {algo_token_address} algo token. It its not free priced. "
+
+#Dispense
+tx_result = dispenser.dispense(algo_token_address, to_wei(1), bob_wallet)
+assert tx_result, "failed to dispense algo tokens."
+print(f"tx_result = '{tx_result}'")
+
+
+assert algo_token.balanceOf(bob_wallet.address) >= 1.0, "Bob didn't get 1.0 datatokens"
+print(f"algo token in bob wallet = '{algo_token.balanceOf(bob_wallet.address)}'")
+```
+
+<br />
 
 ## 3. Bob sends his datatoken to the service
+
 In the same python console:
+
 ```python
 DATA_DDO = ocean.assets.resolve(DATA_did)  # make sure we operate on the updated and indexed metadata_cache_uri versions
 ALG_DDO = ocean.assets.resolve(ALG_did)
- 
+
 compute_service = DATA_DDO.get_service('compute')
 algo_service = ALG_DDO.get_service('access')
- 
+
 from ocean_lib.web3_internal.constants import ZERO_ADDRESS
 from ocean_lib.models.compute_input import ComputeInput
- 
+
 # order & pay for dataset
 dataset_order_requirements = ocean.assets.order(
     DATA_did, bob_wallet.address, service_type=compute_service.type
@@ -154,8 +230,12 @@ print(f"ALG_order_tx_id: {ALG_order_tx_id}")
 
 ```
 
+<br />
+
 ## 4. Bob starts a compute job
+
 In the same python console:
+
 ```python
 # run job
 compute_inputs = [ComputeInput(DATA_did, DATA_order_tx_id, compute_service.index)]
@@ -169,15 +249,19 @@ job_id = ocean.compute.start(
 print(f"Started compute job with id: {job_id}")
 ```
 
+<br />
+
 ## 5. Bob monitors logs / algorithm output
+
 In the same python console:
+
 ```python
 # Bob check job status
 print(ocean.compute.status(DATA_did, job_id, bob_wallet))
- 
+
 # ============================================================================================
 # Bob get result (After job finished)
- 
+
 result_file = ocean.compute.result_file(DATA_did, job_id, 0, bob_wallet)  # 0 index, means we retrieve the results from the first dataset index
 print(result_file)
 ```
