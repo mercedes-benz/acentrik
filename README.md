@@ -1,5 +1,5 @@
 # Acentrik
-![Acentrik Logo](https://github.com/Daimler/acentrik/blob/master/logo-pack/Pantone/logomark-forwhitebg.svg)
+![Acentrik Logo](./logo-pack/Pantone/logomark-forwhitebg.svg)
 
 ## Intended Usage
 
