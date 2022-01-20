@@ -7,8 +7,8 @@ It focuses on ConsumerA's experience as a consumer
 Here are the steps:
 
 1.  Setup
-2.  ConsumerA buys data tokens (Free or Fixed)
-3.  ConsumerA sends his datatoken to the service
+2.  ConsumerA buys datatoken (Fixed) / request datatoken from dispenser (Free)
+3.  ConsumerA pay datatoken for the service
 4.  ConsumerA downloads asset
 
 <br />
@@ -81,7 +81,7 @@ data_token_owner_address = data_asset_info["assetOwnerAddress"]
 
 <br />
 
-## 2. ConsumerA buys data tokens (Free or Fixed)
+## 2. ConsumerA buys datatoken (Fixed) / request datatoken from dispenser (Free)
 
 ### If the Asset is Fixed Price
 
@@ -101,7 +101,7 @@ fre_exchange_id = logs[0].args.exchangeId
 ocean.exchange.buy_at_fixed_rate(
     amount=to_wei(1), # buy 1.0 datatoken
     wallet=consumer_A_wallet,
-    max_OCEAN_amount=to_wei(10), # pay up to 10.0 OCEAN
+    max_OCEAN_amount=to_wei(10), # pay up to 10.0 USDC
     exchange_id=fre_exchange_id,
     data_token=token_address,
     exchange_owner=data_token_owner_address,
@@ -143,7 +143,7 @@ print(f"data token in ConsumerA wallet = '{data_token.balanceOf(consumer_A_walle
 
 <br />
 
-## 3. ConsumerA sends his datatoken to the service
+## 3. ConsumerA pay datatoken for the service
 
 In the same python console:
 
