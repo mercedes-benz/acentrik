@@ -7,8 +7,8 @@ It focuses on ConsumerA's experience as a consumer
 Here are the steps:
 
 1.  Setup
-2.  ConsumerA buys data tokens (for data and algorithm) (Free or Fixed)
-3.  ConsumerA sends his datatoken to the service
+2.  ConsumerA buys datatoken (Fixed) / request datatoken from dispenser (Free)
+3.  ConsumerA pay datatoken for the service
 4.  ConsumerA starts a compute job
 5.  ConsumerA monitors logs / algorithm output
 
@@ -86,7 +86,7 @@ algo_token_owner_address = data_asset_info["algorithmOwnerAddress"]
 
 <br />
 
-## 2. ConsumerA buys data tokens (for data and algorithm)
+## 2. ConsumerA buys datatoken (Fixed) / request datatoken from dispenser (Free)
 
 ### If the Asset is Fixed Price
 
@@ -104,7 +104,7 @@ data_fre_exchange_id = logs[0].args.exchangeId
 ocean.exchange.buy_at_fixed_rate(
     amount=to_wei(1), # buy 1.0 datatoken
     wallet=consumer_A_wallet,
-    max_OCEAN_amount=to_wei(25), # pay up to 25.0 OCEAN
+    max_OCEAN_amount=to_wei(25), # pay up to 25.0 USDC
     exchange_id=data_fre_exchange_id,
     data_token=data_token_address,
     exchange_owner=data_token_owner_address,
@@ -122,7 +122,7 @@ algo_fre_exchange_id = logs[0].args.exchangeId
 ocean.exchange.buy_at_fixed_rate(
     amount=to_wei(1), # buy 1.0 datatoken
     wallet=consumer_A_wallet,
-    max_OCEAN_amount=to_wei(25), # pay up to 25.0 OCEAN
+    max_OCEAN_amount=to_wei(25), # pay up to 25.0 USDC
     exchange_id=algo_fre_exchange_id,
     data_token=data_token_address,
     exchange_owner=algo_token_owner_address,
@@ -180,7 +180,7 @@ print(f"algo token in ConsumerA wallet = '{algo_token.balanceOf(consumer_A_walle
 
 <br />
 
-## 3. ConsumerA sends his datatoken to the service
+## 3. ConsumerA pay datatoken for the service
 
 In the same python console:
 
