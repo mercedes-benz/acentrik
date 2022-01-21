@@ -1,16 +1,14 @@
-# Quickstart: Consume Compute-to-Data Flow (Fixed Rate Exchange)
+# Quickstart: Consume Compute-to-Data Flow
 
-This quickstart describes consuming Compute-to-Data flow.
-
-It focuses on ConsumerA's experience as a consumer
+This describes the flow when running a Compute-to-Data job, focusing on ConsumerA's experience as a Data Consumer on Acentrik Data Marketplace
 
 Here are the steps:
 
 1.  Setup
-2.  ConsumerA buys datatoken (Fixed) / request datatoken from dispenser (Free)
+2.  ConsumerA buys datatoken (Fixed-rate) / request datatoken from dispenser (Free)
 3.  ConsumerA pay datatoken for the service
 4.  ConsumerA starts a compute job
-5.  ConsumerA monitors logs / algorithm output
+5.  ConsumerA monitors logs / output file
 
 Let's go through each step.
 
@@ -86,7 +84,7 @@ algo_token_owner_address = data_asset_info["algorithmOwnerAddress"]
 
 <br />
 
-## 2. ConsumerA buys datatoken (Fixed) / request datatoken from dispenser (Free)
+## 2. ConsumerA buys datatoken (Fixed-rate) / request datatoken from dispenser (Free)
 
 ### If the Asset is Fixed Price
 

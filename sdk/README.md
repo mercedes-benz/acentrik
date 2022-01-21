@@ -1,12 +1,12 @@
 # SDK (Ocean.py)
 
-Python library to privately & securely publish and consume data on Acentrik
+Use of Python Library to publish/consume data on Acentrik privately and securely.
 
 With ocean.py, you can:
 
-- **Publish** data services: downloadable files or compute-to-data, datatoken for each dataset / data service.
+- **Publish** data services: downloadable files or run compute-to-data jobs, datatoken for each dataset / data service.
 - **Mint** datatokens for the service
-- **Sell** datatokens for a fixed price
+- **Sell** datatokens for a premium price
 - **Consume** datatokens, to access the service
 
 ## Setup
@@ -18,7 +18,9 @@ With ocean.py, you can:
   - Either install using (pip install 'ocean-lib>= 0.8.5')
   - or pull latest ocean.py code (https://github.com/oceanprotocol/ocean.py) & build it (pip install ./ocean.py/ )
 - Create a config.ini and fill in as below (Example are with Polygon network)
+
   - You are able to get the required details from Acentrik Developers Details Section
+
     ![Copy info clipboard](./copy_info_clipboard.gif)
 
 ```
