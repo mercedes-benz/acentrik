@@ -1,8 +1,6 @@
-# Quickstart: Publish Flow (Fixed Rate Exchange)
+# Quickstart: Publish Flow
 
-This quickstart describes publishing flow.
-
-It focuses on PublisherA's experience as a publisher
+This describes the flow when publishing a Data Asset, focusing on ProviderrA's experience as a Data Provider on Acentrik Data Marketplace
 
 Here are the steps:
 
@@ -17,9 +15,9 @@ Let's go through each step.
 
 <br />
 
-## Disclaimer!!!
+## Disclaimer
 
-Steps 6 (PublisherA create pricing) are still under maintainence. Currently still didn't support other baseToken other than <b>OCEAN</b>.
+Step 6 (ProviderA creates premium pricing) is currently under maintainence. When publishing data assets, the only option available is Ocean Base Token ($OCEAN).
 
 <br />
 

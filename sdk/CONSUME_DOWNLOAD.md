@@ -1,13 +1,11 @@
-# Quickstart: Consume downloadable asset Flow (Fixed Rate Exchange)
+# Quickstart: Consume downloadable asset Flow
 
-This quickstart describes consuming downloadable asset flow.
-
-It focuses on ConsumerA's experience as a consumer
+This describes the flow when consuming a downloadable asset, focusing on ConsumerA's experience as a Data Consumer on Acentrik Data Marketplace:
 
 Here are the steps:
 
 1.  Setup
-2.  ConsumerA buys datatoken (Fixed) / request datatoken from dispenser (Free)
+2.  ConsumerA buys datatoken (Fixed-rate) / request datatoken from dispenser (Free)
 3.  ConsumerA pay datatoken for the service
 4.  ConsumerA downloads asset
 
@@ -81,7 +79,7 @@ data_token_owner_address = data_asset_info["assetOwnerAddress"]
 
 <br />
 
-## 2. ConsumerA buys datatoken (Fixed) / request datatoken from dispenser (Free)
+## 2. ConsumerA buys datatoken (Fixed-rate) / request datatoken from dispenser (Free)
 
 ### If the Asset is Fixed Price
 
