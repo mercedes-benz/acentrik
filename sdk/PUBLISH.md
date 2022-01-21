@@ -17,7 +17,7 @@ Let's go through each step.
 
 ## Disclaimer
 
-Step 6 (ProviderA creates premium pricing) is currently under maintainence. When publishing data assets, the only option available is Ocean Base Token ($OCEAN).
+Step 6 (PublisherA creates pricing) is currently under maintainence. When publishing data assets, the only option available is Ocean Base Token ($OCEAN).
 
 <br />
 
