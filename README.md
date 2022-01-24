@@ -25,7 +25,7 @@ This project is licensed under the [MIT LICENSE](LICENSE).
 
 ## Provider Information
 
-Please visit [Provider Information](PROVIDER_INFORMATION.md) for information on the provider.
+Please visit the [Provider Information](https://github.com/Daimler/daimler-foss/blob/master/PROVIDER_INFORMATION.md) or the official [Website](https://www.daimler-tss.com/en/imprint/) for information on the provider Daimler TSS GmbH.
 
 ## Notice
 Before you use the program in productive use, please take all necessary precautions, e.g. testing and verifying the program with regard to your specific use. The program was tested solely for our own use cases, which might differ from yours.
