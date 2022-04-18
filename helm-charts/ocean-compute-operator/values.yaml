@@ -4,7 +4,7 @@ namespace: ocean-compute
 ## market image version
 image:
   repository: public.ecr.aws/j0e7f6c1/oceanprotocol/operator-engine
-  tag: jobcleanup
+  tag: v4main
   ## Specify a imagePullPolicy
   pullPolicy: Always
 
@@ -21,7 +21,8 @@ secretstore:
 ## Secret relevant values or keys, depends on secretstore flag
 secret:
   postgres:
-    db: postgresdb
+    db:
+      postgresdb
       #objectName: parameter name
       #objectType: "secretsmanager" or "ssmparameter"
     user: postgresadmin
@@ -61,13 +62,12 @@ config:
     port: "5432"
   storageClass: standard
   pod:
-    configurationContainer: public.ecr.aws/j0e7f6c1/oceanprotocol/pod-configuration:v1.0.9
-    publishContainer: public.ecr.aws/j0e7f6c1/oceanprotocol/pod-publishing:secure_outputs
+    configurationContainer: public.ecr.aws/j0e7f6c1/oceanprotocol/pod-configuration:v4main
+    publishContainer: public.ecr.aws/j0e7f6c1/oceanprotocol/pod-publishing:v4main
   log:
-    level: info
+    level: INFO
   debug:
     noCleanup: false
-
 
 ## Configure pod resources
 # resources:
@@ -85,18 +85,18 @@ storageclass:
   ## AWS provisioner
   #  provisioner: kubernetes.io/aws-ebs
   #  parameters:
-    #  fsType: ext4
-    #  type: gp2
-    #  encrypted: "true"
+  #  fsType: ext4
+  #  type: gp2
+  #  encrypted: "true"
   #  allowedTopologies:
-    #  enabled: true
-    #  matchLabelExpressions:
-    #  - key: failure-domain.beta.kubernetes.io/zone
-    #    values:
-    #  - ap-southeast-1b
+  #  enabled: true
+  #  matchLabelExpressions:
+  #  - key: failure-domain.beta.kubernetes.io/zone
+  #    values:
+  #  - ap-southeast-1b
 
   ## Azure provisioner
   #  provisioner: kubernetes.io/azure-disk
   #  parameters:
-    #  kind: Managed
-    #  storageaccounttype: StandardSSD_LRS
+  #  kind: Managed
+  #  storageaccounttype: StandardSSD_LRS
