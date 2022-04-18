@@ -21,6 +21,16 @@ spec:
       - env:
         - name: ARTIFACTS_PATH
           value: /ocean-provider/artifacts
+        - name: ALLOW_NON_PUBLIC_IP
+          valueFrom:
+            configMapKeyRef:
+              key: ALLOW_NON_PUBLIC_IP
+              name: {{ .Release.Name }}-config
+        - name: AUTHORIZED_DECRYPTERS
+          valueFrom:
+            configMapKeyRef:
+              key: AUTHORIZED_DECRYPTERS
+              name: {{ .Release.Name }}-config
         - name: RBAC_SERVER_URL
           valueFrom:
             configMapKeyRef:
@@ -41,10 +51,10 @@ spec:
             secretKeyRef:
               key: PROVIDER_PRIVATE_KEY
               name: {{ .Release.Name }}-secret-config
-        - name: LOG_LEVEL
+        - name: LOG_CFG
           valueFrom:
             configMapKeyRef:
-              key: LOG_LEVEL
+              key: LOG_CFG
               name: {{ .Release.Name }}-config
         - name: OCEAN_PROVIDER_URL
           valueFrom:
@@ -71,6 +81,18 @@ spec:
             configMapKeyRef:
               key: AQUARIUS_URL
               name: {{ .Release.Name }}-config
+        - name: REQUEST_RETRIES
+          valueFrom:
+            configMapKeyRef:
+              key: REQUEST_RETRIES
+              name: {{ .Release.Name }}-config
+        {{- if .Values.secret.redisConnection }}
+        - name: REDIS_CONNECTION
+          valueFrom:
+            secretKeyRef:
+              key: REDIS_CONNECTION
+              name: {{ .Release.Name }}-secret-config
+        {{- end }}
         name: {{ .Chart.Name }}
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -79,8 +101,7 @@ spec:
           name: http
         {{- if .Values.livenessProbe.enabled }}
         livenessProbe:
-          httpGet:
-            path: /
+          tcpSocket:
             port: http
           initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
@@ -90,8 +111,7 @@ spec:
         {{- end }}
         {{- if .Values.readinessProbe.enabled }}
         readinessProbe:
-          httpGet:
-            path: /
+          tcpSocket:
             port: http
           initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
@@ -103,14 +123,20 @@ spec:
 {{ toYaml .Values.resources | indent 10 }}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
-        {{- if .Values.secretstore.enabled }}
         volumeMounts:
+        - name: logging-file
+          mountPath: /ocean-provider/logging.yaml
+          subPath: logging.yaml
+        {{- if .Values.secretstore.enabled }}
         - name: {{ .Release.Name }}-{{ .Values.secretstore.provider }}-secrets
           mountPath: /mnt/secrets-store/
           readOnly: true
         {{- end }}
-      {{- if .Values.secretstore.enabled }}
       volumes:
+      - name: logging-file
+        configMap:
+          name: {{ .Release.Name }}-config
+      {{- if .Values.secretstore.enabled }}
       - name: {{ .Release.Name }}-{{ .Values.secretstore.provider }}-secrets
         csi:
           driver: secrets-store.csi.k8s.io

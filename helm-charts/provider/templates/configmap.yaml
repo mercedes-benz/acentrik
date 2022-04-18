@@ -1,12 +1,41 @@
 apiVersion: v1
 data:
-  LOG_LEVEL: {{ .Values.config.log.level }}
+  logging.yaml: |
+    version: 1
+    disable_existing_loggers: False
+    formatters:
+        simple:
+            format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    handlers:
+        console:
+            class: logging.StreamHandler
+            formatter: simple
+    loggers:
+        ocean_provider.routes:
+            level: INFO
+            handlers: [console]
+            propagate: yes
+        ocean_provider.utils:
+            level: INFO
+            handlers: [console]
+            propagate: yes
+        urllib3.connectionpool:
+            level: INFO
+            handlers: [console]
+            propagate: no
+    root:
+        level: {{ .Values.config.log.level }}
+        handlers: [console]
+  LOG_CFG: logging.yaml
   OCEAN_PROVIDER_URL: {{ .Values.config.oceanProviderUrl }}
   OCEAN_PROVIDER_WORKERS: {{ .Values.config.oceanProviderWorkers | quote }}
   OCEAN_PROVIDER_TIMEOUT: {{ .Values.config.oceanProviderTimeout | quote }}
   OPERATOR_SERVICE_URL: {{ .Values.config.operatorServiceUrl }}
   AQUARIUS_URL: {{ .Values.config.aquariusUrl }}
-  RBAC_SERVER_URL: {{ .Values.config.rbacUrl }}
+  RBAC_SERVER_URL: {{ .Values.config.rbacUrl | quote }}
+  REQUEST_RETRIES: {{ .Values.config.requestRetries | quote }}
+  AUTHORIZED_DECRYPTERS: {{ .Values.config.authorizedDecrypters | quote }}
+  ALLOW_NON_PUBLIC_IP: {{ .Values.config.allowNonPublicIp | quote }}
 kind: ConfigMap
 metadata:
   annotations:

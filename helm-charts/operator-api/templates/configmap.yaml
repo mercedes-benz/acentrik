@@ -12,6 +12,8 @@ data:
   REQUESTS_MEMORY: {{ .Values.config.resource.requestsMemory | quote }}
   LIMITS_CPU: {{ .Values.config.resource.limitsCpu | quote }}
   LIMITS_MEMORY: {{ .Values.config.resource.limitsMemory | quote }}
+  STORAGE_EXPIRY: {{ .Values.config.storageExpiry | quote }}
+  LOG_LEVEL: {{ .Values.config.log.level }}
 kind: ConfigMap
 metadata:
   annotations:
