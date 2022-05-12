@@ -16,6 +16,7 @@ data:
   POD_CONFIGURATION_CONTAINER: {{ .Values.config.pod.configurationContainer }}
   POD_PUBLISH_CONTAINER: {{ .Values.config.pod.publishContainer }}
   LOG_LEVEL: {{ .Values.config.log.level }}
+  SERVICE_ACCOUNT: {{ .Values.config.serviceAccount }}
 kind: ConfigMap
 metadata:
   annotations:

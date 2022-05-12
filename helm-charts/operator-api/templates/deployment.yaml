@@ -119,6 +119,13 @@ spec:
             configMapKeyRef:
               key: LIMITS_MEMORY
               name: {{ .Release.Name }}-config
+        {{- if .Values.config.storageExpiry }}
+        - name: STORAGE_EXPIRY
+          valueFrom:
+            configMapKeyRef:
+              key: STORAGE_EXPIRY
+              name: {{ .Release.Name }}-config
+        {{- end }}
         name: {{ .Chart.Name }}
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
