@@ -114,7 +114,10 @@ spec:
               key: POD_PUBLISH_CONTAINER
               name: {{ .Release.Name }}-config
         - name: SERVICE_ACCOUNT
-          value: {{ .Release.Name }}
+          valueFrom:
+            configMapKeyRef:
+              key: SERVICE_ACCOUNT
+              name: {{ .Release.Name }}-config
         - name: POSTGRES_DB
           valueFrom:
             secretKeyRef:

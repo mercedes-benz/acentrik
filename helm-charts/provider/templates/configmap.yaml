@@ -7,6 +7,8 @@ data:
   OPERATOR_SERVICE_URL: {{ .Values.config.operatorServiceUrl }}
   AQUARIUS_URL: {{ .Values.config.aquariusUrl }}
   RBAC_SERVER_URL: {{ .Values.config.rbacUrl }}
+  REQUEST_RETRIES: {{ .Values.config.requestRetries | quote }}
+  ALLOW_NON_PUBLIC_IP: {{ .Values.config.allowNonPublicIp | quote }}
 kind: ConfigMap
 metadata:
   annotations:

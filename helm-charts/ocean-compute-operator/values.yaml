@@ -4,7 +4,7 @@ namespace: ocean-compute
 ## market image version
 image:
   repository: public.ecr.aws/j0e7f6c1/oceanprotocol/operator-engine
-  tag: jobcleanup
+  tag: jobcleanup-hotfix
   ## Specify a imagePullPolicy
   pullPolicy: Always
 
@@ -53,12 +53,6 @@ config:
     ## expiry time must be in hour (h) or minutes (m) unit.
     ## Default 60 days = 1440 hours
     expiryTime: "1440h"
-  postgres:
-    db: postgresdb
-    user: postgresadmin
-    password: changeme
-    host: postgresql.ocean-operator.svc.cluster.local
-    port: "5432"
   storageClass: standard
   pod:
     configurationContainer: public.ecr.aws/j0e7f6c1/oceanprotocol/pod-configuration:v1.0.9
@@ -67,36 +61,27 @@ config:
     level: info
   debug:
     noCleanup: false
-
-
-## Configure pod resources
-# resources:
-#   limits:
-#     cpu: 500m
-#     memory: 500Mi
-#   requests:
-#     cpu: 500m
-#     memory: 500Mi
+  serviceAccount: default
 
 storageclass:
-  enabled: false
+  enabled: true
   name: standard
   reclaimPolicy: Delete
   ## AWS provisioner
-  #  provisioner: kubernetes.io/aws-ebs
-  #  parameters:
-    #  fsType: ext4
-    #  type: gp2
-    #  encrypted: "true"
-  #  allowedTopologies:
-    #  enabled: true
-    #  matchLabelExpressions:
-    #  - key: failure-domain.beta.kubernetes.io/zone
-    #    values:
-    #  - ap-southeast-1b
+  provisioner: kubernetes.io/aws-ebs
+  parameters:
+    fsType: ext4
+    type: gp2
+    encrypted: "true"
+  allowedTopologies:
+    enabled: true
+    matchLabelExpressions:
+      - key: failure-domain.beta.kubernetes.io/zone
+        values:
+          - ap-southeast-1a
 
   ## Azure provisioner
   #  provisioner: kubernetes.io/azure-disk
   #  parameters:
-    #  kind: Managed
-    #  storageaccounttype: StandardSSD_LRS
+  #  kind: Managed
+  #  storageaccounttype: StandardSSD_LRS

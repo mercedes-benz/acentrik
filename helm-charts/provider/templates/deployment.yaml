@@ -21,6 +21,11 @@ spec:
       - env:
         - name: ARTIFACTS_PATH
           value: /ocean-provider/artifacts
+        - name: ALLOW_NON_PUBLIC_IP
+           valueFrom:
+             configMapKeyRef:
+               key: ALLOW_NON_PUBLIC_IP
+               name: {{ .Release.Name }}-config
         - name: RBAC_SERVER_URL
           valueFrom:
             configMapKeyRef:
@@ -71,6 +76,18 @@ spec:
             configMapKeyRef:
               key: AQUARIUS_URL
               name: {{ .Release.Name }}-config
+        - name: REQUEST_RETRIES
+          valueFrom:
+            configMapKeyRef:
+              key: REQUEST_RETRIES
+              name: {{ .Release.Name }}-config
+        {{- if .Values.secret.redisConnection }}
+        - name: REDIS_CONNECTION
+          valueFrom:
+            secretKeyRef:
+              key: REDIS_CONNECTION
+              name: {{ .Release.Name }}-secret-config
+        {{- end }}
         name: {{ .Chart.Name }}
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -79,8 +96,7 @@ spec:
           name: http
         {{- if .Values.livenessProbe.enabled }}
         livenessProbe:
-          httpGet:
-            path: /
+          tcpSocket:
             port: http
           initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
@@ -90,8 +106,7 @@ spec:
         {{- end }}
         {{- if .Values.readinessProbe.enabled }}
         readinessProbe:
-          httpGet:
-            path: /
+          tcpSocket:
             port: http
           initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
