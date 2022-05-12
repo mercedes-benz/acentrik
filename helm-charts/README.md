@@ -14,6 +14,7 @@ First, the following resources are required for a proper runtime environment set
 4. An Ethereum RPC service provider account (such as Infura)
 5. Own-managed Kubernetes environment
 6. A DockerHub subscription account with a decent pull rate limit
+7. Redis for stateless provider setup
 
 \*Note: Relevant T&Cs will be applied for usage of Acentrik's Decentralized Storage. Dedicated API Client ID and Key will be distributed.
 
@@ -49,14 +50,18 @@ public.ecr.aws/j0e7f6c1
 
 ## [Customize your Provider deployment](./provider)
 
-| Variable                    | Description                                                                                |
-| --------------------------- | ------------------------------------------------------------------------------------------ |
-| secret.infuraProjectId      | Ethereum RPC Project ID                                                                    |
-| secret.providerPrivateKey\* | Private key of your provider wallet account, which used to encrypt the data asset endpoint |
-| config.networkUrl           | Network name: rinkeby, mainnet, polygon                                                    |
-| config.ipfsGateway          | Your IPFS Gateway if any                                                                   |
-| config.operatorServiceUrl   | Your custom operator service endpoint URL                                                  |
-| config.aquariusUrl\*\*      | Predefined Aquarius URL of a selected network                                              |
+| Variable                     | Description                                                                                      |
+| ---------------------------- | ------------------------------------------------------------------------------------------------ |
+| secret.infuraProjectId       | Ethereum RPC Project ID                                                                          |
+| secret.providerPrivateKey\*  | Private key of your provider wallet account, which used to encrypt the data asset endpoint       |
+| config.networkUrl            | Network name: rinkeby, mainnet, polygon                                                          |
+| config.redisConnection       | Connection URL to Redis. Defaults to None (no Redis connection, SQLite database is used instead) |
+| config.ipfsGateway           | Your IPFS Gateway if any                                                                         |
+| config.operatorServiceUrl    | Your custom operator service endpoint URL                                                        |
+| config.aquariusUrl\*\*       | Predefined Aquarius URL of a selected network                                                    |
+| config.rbacUrl\*\*           | URL to the RBAC permissions server. Defaults to None (no special permissions).                   |
+| config.log.level\*\*         | Logging level                                                                                    |
+| config.allowNonPublicIp \*\* | Allow Non Public IP to access to Provider                                                        |
 
 - Private Key
   - The secret half of your Address / public key
@@ -65,7 +70,7 @@ public.ecr.aws/j0e7f6c1
   - Example: afdfd9c3d2095ef696594f6cedcae59e72dcd697e2a7521b1578140422a4f890
   - As standard, the key will be stored as Kubernetes Secret. However, it is possible to integrate with an external secret provider depends on your distributed architecture infrastructure setup
 
-\*\* Aquarius URL refer to https://aquarius.<network\>.acentrik.io
+\*\* Aquarius URL refer to https://aquarius.acentrik.io
 
 **Steps**
 
@@ -93,6 +98,9 @@ helm upgrade provider ./ \
 | secret.postgres.port                | PostgreSQL operator database port                                                                                 |
 | config.operatorAddress              | Public address of your provider wallet account                                                                    |
 | config.algoPodTimeout               | Allowed time (in seconds) for an algorithm to run. After timeout, the relevant execution pods will be terminated. |
+| config.signatureRequired            | 0 -> no signature required, 1 -> request brizo signature                                                          |
+| config.allowedProviders             | Json array with allowed providers that can access the endpoints                                                   |
+| config.defaultNamespace             | namespace which will run the jobs                                                                                 |
 | config.resource.inputVolumeSize     | Compute engine container input file volume size, value should include unit.                                       |
 | config.resource.outputVolumeSize    | Compute engine container output file volume size, value should include unit.                                      |
 | config.resource.adminLogsVolumeSize | Compute engine container log file volume size, value should include unit.                                         |
@@ -136,6 +144,13 @@ helm upgrade operator-api ./ \
 | config.ipfs.adminlogs              | IPFS API endpoint to store compute log files                                                                |
 | config.ipfs.outputPrefix           | IPFS API endpoint for end-user to download compute output files                                             |
 | config.ipfs.adminlogsPrefix        | IPFS API endpoint for end-user to download compute log files                                                |
+| config.ipfs.expiryTime             | IPFS ExpiryTime                                                                                             |
+| config.storageClass                | Storage class to use                                                                                        |
+| config.pod.configurationContainer  | Configuration Container Image                                                                               |
+| config.pod.publishContainer        | Publish Container Image                                                                                     |
+| config.log.level                   | Logging Level                                                                                               |
+| config.debug.noCleanup             | Clean Up after Compute job finished                                                                         |
+| config.serviceAccount              | K8 service account to run pods. Defaults to 'default'                                                       |
 | secret.ipfs.apiKey                 | IPFS API Key for authentication purpose (optional)                                                          |
 | secret.ipfs.apiClient              | IPFS API Client ID for authentication purpose (optional)                                                    |
 
