@@ -5,8 +5,8 @@ This describes the flow when consuming a downloadable asset, focusing on Consume
 Here are the steps:
 
 1.  Setup
-2.  ConsumerA buys datatoken (Fixed-rate) / request datatoken from dispenser (Free)
-3.  ConsumerA pay datatoken for the service
+2.  ConsumerA Approve Data Token
+3.  ConsumerA buys datatoken (Fixed-rate) / request datatoken from dispenser (Free)
 4.  ConsumerA downloads asset
 
 <br />
@@ -31,7 +31,8 @@ Create an asset_info.json file and filled up the asset details
   "providerUri": "https://provider.polygon.acentrik.io",
   "assetTokenAddress": "0x53406e3A470Cdbb3dEC62Af5064950FdE8f78938",
   "assetDid": "did:op:53406e3A470Cdbb3dEC62Af5064950FdE8f78938",
-  "assetOwnerAddress": "0x9Bf750b5465a51689fA4235aAc1F37EC692ef7b4"
+  "assetOwnerAddress": "0x9Bf750b5465a51689fA4235aAc1F37EC692ef7b4",
+  "baseTokenAddress": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
 }
 ```
 
@@ -46,22 +47,19 @@ Create an asset_info.json file and filled up the asset details
 In the Python console:
 
 ```python
-
 #create ocean instance
 from ocean_lib.config import Config
 from ocean_lib.ocean.ocean import Ocean
 config = Config('config.ini')
 ocean = Ocean(config)
-from ocean_lib.models.dispenser import DispenserContract
-from ocean_lib.web3_internal.contract_utils import get_contracts_addresses
+from ocean_lib.models.erc20_enterprise import ERC20Enterprise
 import json
 
-print(f"ocean.exchange._exchange_address = '{ocean.exchange._exchange_address}'")
+# print(f"ocean.exchange._exchange_address = '{ocean.exchange._exchange_address}'")
 print(f"config.network_url = '{config.network_url}'")
 print(f"config.block_confirmations = {config.block_confirmations.value}")
 print(f"config.metadata_cache_uri = '{config.metadata_cache_uri}'")
 print(f"config.provider_url = '{config.provider_url}'")
-
 
 from ocean_lib.web3_internal.currency import from_wei, to_wei
 import os
@@ -71,42 +69,89 @@ from ocean_lib.web3_internal.wallet import Wallet
 asset_info = open('asset_info.json')
 data_asset_info = json.load(asset_info)
 asset_info.close()
-
 token_address =  data_asset_info["assetTokenAddress"]
 did = data_asset_info["assetDid"]
 data_token_owner_address = data_asset_info["assetOwnerAddress"]
+base_token_address = data_asset_info["baseTokenAddress"]
 ```
 
 <br />
 
-## 2. ConsumerA buys datatoken (Fixed-rate) / request datatoken from dispenser (Free)
-
-### If the Asset is Fixed Price
+## 2. Approve tokens for consumer_A
 
 In the same python console (Fixed Pricing Asset):
 
 ```python
+usdc_token = ocean.get_datatoken(ocean.web3.toChecksumAddress(base_token_address))
 
-consumer_A_wallet = Wallet(ocean.web3, os.getenv('TEST_PRIVATE_KEY2'), config.block_confirmations,  config.transaction_timeout)
+erc20_enterprise_token = ERC20Enterprise(ocean.web3, ocean.web3.toChecksumAddress(token_address))
 
-# ============================================================================================
-# ConsumerA buys data tokens (Fixed)
 
-data_token = ocean.get_data_token(token_address)
+consumer_private_key = os.getenv('TEST_PRIVATE_KEY2')
+consumer_A_wallet = Wallet(ocean.web3, consumer_private_key, config.block_confirmations,  config.transaction_timeout)
 
-logs = ocean.exchange.search_exchange_by_data_token(token_address)
-fre_exchange_id = logs[0].args.exchangeId
-ocean.exchange.buy_at_fixed_rate(
-    amount=to_wei(1), # buy 1.0 datatoken
-    wallet=consumer_A_wallet,
-    max_OCEAN_amount=to_wei(10), # pay up to 10.0 USDC
-    exchange_id=fre_exchange_id,
-    data_token=token_address,
-    exchange_owner=data_token_owner_address,
-)
+datatoken_address = token_address
+nft_factory = ocean.get_nft_factory()
 
-assert data_token.balanceOf(consumer_A_wallet.address) >= 1.0, "ConsumerA didn't get 1.0 datatokens"
-print(f"data token in ConsumerA wallet = '{data_token.balanceOf(consumer_A_wallet.address)}'")
+exchange_addresses_and_ids = nft_factory.search_exchange_by_datatoken(ocean.fixed_rate_exchange, erc20_enterprise_token.address, exchange_owner=data_token_owner_address)
+assert (
+    exchange_addresses_and_ids
+), f"No exchanges found. datatoken_address = {datatoken_address}, exchange_owner = {data_token_owner_address}."
+
+
+exchange_address = exchange_addresses_and_ids[0][0]
+exchange_id = exchange_addresses_and_ids[0][1]
+
+fixed_price_address = ocean.fixed_rate_exchange.address
+
+# Approve tokens for consumer_A
+usdc_token.approve(erc20_enterprise_token.address, ocean.to_wei(100), consumer_A_wallet)
+erc20_enterprise_token.approve(erc20_enterprise_token.address, ocean.to_wei(100), consumer_A_wallet)
+```
+
+<br />
+
+## 3. ConsumerA buys datatoken (Fixed-rate) / request datatoken from dispenser (Free)
+
+In the same python console (Fixed Pricing Asset):
+
+```python
+asset = ocean.assets.resolve(did)
+access_service = asset.services[0]
+
+(
+    provider_fee_address,
+    provider_fee_token,
+    provider_fee_amount,
+    v,
+    r,
+    s,
+    valid_until,
+    provider_data,
+) = ocean.retrieve_provider_fees(asset=asset, access_service=access_service, publisher_wallet=consumer_A_wallet)
+
+tx = erc20_enterprise_token.buy_from_fre_and_order(
+        consumer=consumer_A_wallet.address,
+        service_index=0,
+        provider_fee_address=provider_fee_address,
+        provider_fee_token=provider_fee_token,
+        provider_fee_amount=provider_fee_amount,
+        v=v,
+        r=r,
+        s=s,
+        valid_until=0,
+        provider_data=provider_data,
+        consume_market_order_fee_address=consumer_A_wallet.address,
+        consume_market_order_fee_token=erc20_enterprise_token.address,
+        consume_market_order_fee_amount=0,
+        exchange_contract=ocean.fixed_rate_exchange.address,
+
+        exchange_id=exchange_id,
+        max_base_token_amount=to_wei(10),
+        consume_market_swap_fee_amount=to_wei("0.001"),  # 1e15 => 0.1%
+        consume_market_swap_fee_address=consumer_A_wallet.address,
+        from_wallet=consumer_A_wallet,
+    )
 ```
 
 <br />
@@ -116,62 +161,38 @@ print(f"data token in ConsumerA wallet = '{data_token.balanceOf(consumer_A_walle
 In the same python console (Free Pricing Asset):
 
 ```python
-consumer_A_wallet = Wallet(ocean.web3, os.getenv('TEST_PRIVATE_KEY2'), config.block_confirmations,  config.transaction_timeout)
-
-# ============================================================================================
-# ConsumerA dispense data tokens (Free)
-data_token = ocean.get_data_token(token_address)
-
-contracts_addresses = get_contracts_addresses(config.network_name, config.address_file)
-assert contracts_addresses, "invalid network."
-
-dispenser_address = contracts_addresses["Dispenser"]
-dispenser = DispenserContract(consumer_A_wallet.web3, dispenser_address)
-assert dispenser.is_active(token_address), f"dispenser is not active for {token_address} data token. It its not free priced. "
-
-#Dispense
-tx_result = dispenser.dispense(token_address, to_wei(1), consumer_A_wallet)
-assert tx_result, "failed to dispense data tokens."
-print(f"tx_result = '{tx_result}'")
-
-assert data_token.balanceOf(consumer_A_wallet.address) >= 1.0, "ConsumerA didn't get 1.0 datatokens"
-print(f"data token in ConsumerA wallet = '{data_token.balanceOf(consumer_A_wallet.address)}'")
-
-```
-
-<br />
-
-## 3. ConsumerA pay datatoken for the service
-
-In the same python console:
-
-```python
-# ConsumerA points to the service object
-
-from ocean_lib.web3_internal.constants import ZERO_ADDRESS
-from ocean_lib.common.agreements.service_types import ServiceTypes
 asset = ocean.assets.resolve(did)
-service = asset.get_service(ServiceTypes.ASSET_ACCESS)
+access_service = asset.services[0]
 
-# ============================================================================================
-# ConsumerA sends his datatoken to the service
 
-quote = ocean.assets.order(asset.did, consumer_A_wallet.address, service_index=service.index)
+(
+    provider_fee_address,
+    provider_fee_token,
+    provider_fee_amount,
+    v,
+    r,
+    s,
+    valid_until,
+    provider_data,
+) = ocean.retrieve_provider_fees(asset=asset, access_service=access_service, publisher_wallet=consumer_A_wallet)
 
-order_tx_id = ocean.assets.pay_for_service(
-        ocean.web3,
-        quote.amount,
-        quote.data_token_address,
-        asset.did,
-        service.index,
-        ZERO_ADDRESS,
-        consumer_A_wallet,
-        quote.computeAddress,
+tx = erc20_enterprise_token.buy_from_dispenser_and_order(
+    consumer=consumer_A_wallet.address,
+    service_index=0,
+    provider_fee_address=provider_fee_address,
+    provider_fee_token=provider_fee_token,
+    provider_fee_amount=provider_fee_amount,
+    v=v,
+    r=r,
+    s=s,
+    valid_until=valid_until,
+    provider_data=provider_data,
+    consume_market_order_fee_address=consumer_A_wallet.address,
+    consume_market_order_fee_token=erc20_enterprise_token.address,
+    consume_market_order_fee_amount=0,
+    dispenser_address=ocean.dispenser.address,
+    from_wallet=consumer_A_wallet,
 )
-print(f"order_tx_id = '{order_tx_id}'")
-
-assert data_token.balanceOf(consumer_A_wallet.address) >= 1.0, "ConsumerA didn't get 1.0 datatokens"
-print(f"data token in ConsumerA wallet = '{data_token.balanceOf(consumer_A_wallet.address)}'")
 ```
 
 <br />
@@ -181,13 +202,12 @@ print(f"data token in ConsumerA wallet = '{data_token.balanceOf(consumer_A_walle
 In the same python console:
 
 ```python
-#If the connection breaks, ConsumerA can request again by showing order_tx_id.
-file_path = ocean.assets.download(
-    asset.did,
-    service.index,
-    consumer_A_wallet,
-    order_tx_id,
-    destination='./'
-)
-print(f"file_path = '{file_path}'") #e.g. datafile.0xAf07...
+file_path = ocean.assets.download_asset(
+    asset=asset,
+    service=access_service,
+    consumer_wallet=consumer_A_wallet,
+    destination='./',
+    order_tx_id=tx
+    )
+print(file_path)
 ```
