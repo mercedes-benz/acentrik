@@ -2,6 +2,14 @@
 
 This describes the flow when running a Compute-to-Data job, focusing on ConsumerA's experience as a Data Consumer on Acentrik Data Marketplace
 
+<br />
+
+## Disclaimer
+
+The Current Compute-to-Date Job are still on work in progress.
+
+<br />
+
 Here are the steps:
 
 1.  Setup
