@@ -133,7 +133,7 @@ helm upgrade operator-api ./ \
 | secret.postgres.password           | PostgreSQL operator database password                                                                       |
 | secret.postgres.host               | PostgreSQL operator database hostname                                                                       |
 | secret.postgres.port               | PostgreSQL operator database port                                                                           |
-| secret.postgres.operatorPrivateKey | Private key of your operator wallet account                                                                 |
+| secret.operatorPrivateKey          | Private key of your operator wallet account                                                                 |
 | config.aws.enabled                 | Allowed AWS S3 bucket for compute data storage                                                              |
 | secret.aws.accessKeyId             | AWS IAM user account access key ID to access S3 bucket                                                      |
 | secret.aws.secretAccessKey         | AWS IAM user account access secret key to access S3 bucket                                                  |
