@@ -41,8 +41,9 @@ First, the following resources are required for a proper runtime environment set
 
 ## Tools
 
-1. Helm 3 CLI
-2. kubectl CLI
+1. Helm 3 CLI - [install](https://helm.sh/docs/intro/install/)
+2. kubectl CLI - [install](https://kubernetes.io/docs/tasks/tools/#kubectl)
+3. curl CLI - [install](https://curl.se/download.html)
 
 ---
 
@@ -50,7 +51,7 @@ First, the following resources are required for a proper runtime environment set
 
 Deploy the following helm chart with appropriate customized values. The download links for each helm charts will be provided.
 
-|     | Helm Chart                                         | Recommended Namespace          | Right Aligned                                                                       |
+|     | Helm Chart                                         | Recommended Namespace          | Description                                                                       |
 | :-- | :------------------------------------------------- | :----------------------------- | ----------------------------------------------------------------------------------- |
 | 1   | [provider](./provider)                             | network specific, e.g. polygon | An Ethereum network-specific deployment object to serve an interface to Marketplace |
 | 2   | [operator-api](./operator-api)                     | ocean-operator                 | An Ethereum network-independent deployment object to manage all C2D requests        |
@@ -62,15 +63,13 @@ Note: Modify the helm charts according on your own Kubernetes cluster setup when
 
 ### Container registry
 
-By default, all helm charts are predefined with public docker images available in Acentrik's Amazon Elastic Container Registry (Amazon ECR)
-
-Following the public registry
+By default, all helm charts are predefined with public docker images available in Acentrik's Amazon Elastic Container Registry (Amazon ECR), as following public registry
 
 ```
 public.ecr.aws/j0e7f6c1
 ```
 
-Optinally you can pull and mirror all the required images to your own private registry if any.
+Optionally you can pull and mirror all the required images to your own private registry if necessary.
 
 <br />
 
@@ -203,14 +202,14 @@ helm upgrade ocean-compute-operator ./ocean-compute-operator \
 ### Initialize database
 The newly created edge node must be initialized after the installation completed.
 
-Assuming your Operator-Service (operator-api) is running on namespace 'ocean-operator' with port 8050, perform the following.
+Assuming your Operator-Service (operator-api) is running on namespace 'ocean-operator' with port 8050, perform the following actions.
 
 Portfoward to the running operator-api service
 ```
 kubectl port-forward service/operator-api 8050:8050 -n ocean-operator
 ```
 
-Run a curl command to call the REST API below
+Run a curl command to call the initialization REST API
 ```
 curl -X POST "http://localhost:8050/api/v1/operator/pgsqlinit" -H "accept: application/json"
 ```
