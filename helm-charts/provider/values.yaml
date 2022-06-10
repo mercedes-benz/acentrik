@@ -1,7 +1,7 @@
 ## market image version
 image:
   repository: public.ecr.aws/j0e7f6c1/oceanprotocol/provider-py
-  tag: v0.4.22-hotfix
+  tag: v0.4.22-hotfix-02
   ## Specify a imagePullPolicy
   pullPolicy: Always
 
