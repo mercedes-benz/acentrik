@@ -1,5 +1,25 @@
 # Edge Node Guidelines and Setup Instructions
 
+- [Overview](#overview)
+- [Prerequisites](#prerequisites)
+- [Tools](#tools)
+- [Installation](#installation)
+  - [Container Registry](#container-registry)
+  - [Customize Provider Deployment](#customize-your-provider-deployment)
+  - [Customize Operator-Service Deployment](#customize-your-operator-service-deployment)
+  - [Customize Operator-Engine Deployment](#customize-your-operator-engine-deployment)
+- [Post Installation](#post-installation)
+- [Best Practice](#best-practice)
+
+---
+
+## Overview
+An edge node contains 3 major components: Provider, Operator-Service and Operator-Engine
+
+![component overview](./edge-node-overview.png)
+
+---
+
 ## Prerequisites
 
 First, the following resources are required for a proper runtime environment setup:
@@ -17,14 +37,14 @@ First, the following resources are required for a proper runtime environment set
 
 \*Note: Relevant T&Cs will be applied for usage of Acentrik's Decentralized Storage. Dedicated API Client ID and Key will be distributed.
 
-<br />
+---
 
 ## Tools
 
 1. Helm 3 CLI
 2. kubectl CLI
 
-<br />
+---
 
 ## Installation
 
@@ -40,34 +60,34 @@ Note: Modify the helm charts according on your own Kubernetes cluster setup when
 
 <br />
 
-### Docker image registry
+### Container registry
 
-By default, all helm charts are predefined with public docker images available in Acentrik's Amazon Elastics Container Registry (Amazon ECR).
+By default, all helm charts are predefined with public docker images available in Acentrik's Amazon Elastic Container Registry (Amazon ECR)
 
-Optinally you can pull and mirror all the required images to your own private registry if any.
-
-**Acentrik Public Registry**
+Following the public registry
 
 ```
 public.ecr.aws/j0e7f6c1
 ```
 
+Optinally you can pull and mirror all the required images to your own private registry if any.
+
 <br />
 
-## [Customize your Provider deployment](./provider)
+### [Customize your Provider deployment](./provider)
 
-| Variable                     | Description                                                                                      |
-| ---------------------------- | ------------------------------------------------------------------------------------------------ |
-| secret.infuraProjectId       | Ethereum RPC Project ID                                                                          |
-| secret.providerPrivateKey\*  | Private key of your provider wallet account, which used to encrypt the data asset endpoint       |
-| config.networkUrl            | Network name: polygon                                                          |
+| Variable                     | Description                                                                                                             |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| secret.infuraProjectId       | Ethereum RPC Project ID                                                                                                 |
+| secret.providerPrivateKey\*  | Private key of your provider wallet account, which used to encrypt the data asset endpoint                              |
+| config.networkUrl            | Network name: polygon                                                                                                   |
 | config.redisConnection\*\*   | Connection URL to Redis. Defaults to None (no Redis connection, SQLite database embedded with provider is used instead) |
-| config.ipfsGateway           | Your IPFS Gateway if any                                                                         |
-| config.operatorServiceUrl    | Your custom operator service endpoint URL                                                        |
-| config.aquariusUrl\*\*\*     | Predefined Aquarius URL of multi-chain network                                                   |
-| config.rbacUrl\*\*\*\*       | URL to the RBAC permissions server. Defaults to Acentrik RBAC Server                             |
-| config.log.level             | Logging level                                                                                    |
-| config.allowNonPublicIp      | Allow Non Public IP to access from Provider                                                      |
+| config.ipfsGateway           | Your IPFS Gateway if any                                                                                                |
+| config.operatorServiceUrl    | Your custom operator service endpoint URL                                                                               |
+| config.aquariusUrl\*\*\*     | Predefined Aquarius URL of multi-chain network                                                                          |
+| config.rbacUrl\*\*\*\*       | URL to the RBAC permissions server. Defaults to Acentrik RBAC Server                                                    |
+| config.log.level             | Logging level                                                                                                           |
+| config.allowNonPublicIp      | Allow Non Public IP to access from Provider                                                                             |
 
 \*Provider Private Key
 - The secret hash of your Ether wallet account
@@ -79,9 +99,10 @@ public.ecr.aws/j0e7f6c1
 \*\* Redis acting as a shared cache storage is highly recommended to support multi-replicas setup of provider service which ensure high availability. Without Redis, only 1 replica is supported.
 
 \*\*\* Aquarius URL refer to https://aquarius.acentrik.io (DO NOT change)
+
 \*\*\*\* RBAC URL refer to https://rbac.acentrik.io (DO NOT change)
 
-**Steps**
+#### Steps
 Copy and modify the default helm values file as a new custom-values.yaml
 
 ```
@@ -95,7 +116,7 @@ helm upgrade provider ./provider \
 
 <br />
 
-## [Customize your Operator Service deployment](./operator-api)
+### [Customize your Operator-Service deployment](./operator-api)
 
 | Variable                            | Description                                                                                                       |
 | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -117,7 +138,7 @@ helm upgrade provider ./provider \
 | config.resource.limitsCpu           | Compute engine container request maximum CPU, value should include unit.                                          |
 | config.resource.limitsMemory        | Compute engine container request maximum memory, value should include unit.                                       |
 
-**Steps**
+#### Steps
 Copy and modify the default helm values file as a new custom-values.yaml
 
 ```
@@ -131,7 +152,7 @@ helm upgrade operator-api ./operator-api \
 
 <br />
 
-## [Customize your Compute Engine deployment](./ocean-compute-operator)
+### [Customize your Operator-Engine deployment](./ocean-compute-operator)
 
 | Variable                           | Description                                                                                                 |
 | ---------------------------------- | ----------------------------------------------------------------------------------------------------------- |
@@ -163,7 +184,7 @@ helm upgrade operator-api ./operator-api \
 
 \*\* Dedicated API Client ID and Key will be distributed for usage of Acentrik's Decentralized Storage
 
-**Steps**
+#### Steps
 Copy and modify the default helm values file as a new custom-values.yaml
 
 ```
@@ -175,22 +196,26 @@ helm upgrade ocean-compute-operator ./ocean-compute-operator \
     --render-subchart-notes
 ```
 
-<br />
+---
 
 ## Post-installation
 
 ### Initialize database
 The newly created edge node must be initialized after the installation completed.
 
-Assuming your operator-api service is running on namespace 'ocean-operator' with port 8050, perform the following:
+Assuming your Operator-Service (operator-api) is running on namespace 'ocean-operator' with port 8050, perform the following.
 
+Portfoward to the running operator-api service
 ```
 kubectl port-forward service/operator-api 8050:8050 -n ocean-operator
-curl -X POST "http://localhost:8050/api/v1/operator/pgsqlinit" -H "accept: application/json"
-
 ```
 
-<br />
+Run a curl command to call the REST API below
+```
+curl -X POST "http://localhost:8050/api/v1/operator/pgsqlinit" -H "accept: application/json"
+```
+
+---
 
 ## Best Practice
 
