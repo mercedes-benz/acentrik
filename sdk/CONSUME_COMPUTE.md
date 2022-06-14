@@ -22,6 +22,8 @@ Here are the steps:
 
 Let's go through each step.
 
+<br />
+
 ## 1. Setup
 
 ### Prerequisites
@@ -127,8 +129,9 @@ In the Python console:
 usdc_token.approve(asset_erc20_enterprise_token.address, ocean.to_wei(100), consumer_A_wallet)
 
 asset_erc20_enterprise_token.approve(asset_erc20_enterprise_token.address, ocean.to_wei(100), consumer_A_wallet)
-
 ```
+
+<br />
 
 ## 3. ConsumerA buys datatoken (Fixed-rate) / request datatoken from dispenser (Free)
 
@@ -219,38 +222,139 @@ DATA_compute_input.transfer_tx_id = tx
 
 <br />
 
+## 4. ConsumerA Approve Algorithm Token
+
+In the Python console:
+
+```python
+usdc_token.approve(algo_erc20_enterprise_token.address, ocean.to_wei(100), consumer_A_wallet)
+
+algo_erc20_enterprise_token.approve(algo_erc20_enterprise_token.address, ocean.to_wei(100), consumer_A_wallet)
+```
+
 <br />
 
-## 4. ConsumerA starts a compute job
+## 5. ConsumerA buys Algorithm token (Fixed-rate) / request Algorithm token from dispenser (Free)
+
+### If the Asset is Fixed Price
+
+In the same python console (Fixed Pricing Asset):
+
+```python
+# get asset exchange id
+algo_exchange_addresses_and_ids = ocean.get_nft_factory().search_exchange_by_datatoken(ocean.fixed_rate_exchange, algo_erc20_enterprise_token.address, exchange_owner=algo_token_owner_address)
+assert (
+    algo_exchange_addresses_and_ids
+), f"No exchanges found. datatoken_address = {algo_erc20_enterprise_token.address}, exchange_owner = {algo_token_owner_address}."
+print(algo_exchange_addresses_and_ids)
+
+algo_exchange_address = algo_exchange_addresses_and_ids[0][0]
+algo_exchange_id = algo_exchange_addresses_and_ids[0][1]
+
+algo_provider_fees = fees_response["algorithm"]["providerFee"]
+
+tx_algo = algo_erc20_enterprise_token.buy_from_fre_and_order(
+        consumer=environments[0]["consumerAddress"],
+        service_index=0,
+        provider_fee_address= algo_provider_fees["providerFeeAddress"],
+        provider_fee_token=algo_provider_fees["providerFeeToken"],
+        provider_fee_amount=algo_provider_fees["providerFeeAmount"],
+        v=algo_provider_fees["v"],
+        r=algo_provider_fees["r"],
+        s=algo_provider_fees["s"],
+        valid_until=algo_provider_fees["validUntil"],
+        provider_data=algo_provider_fees["providerData"],
+        consume_market_order_fee_address=consumer_A_wallet.address,
+        consume_market_order_fee_token=algo_erc20_enterprise_token.address,
+        consume_market_order_fee_amount=0,
+        exchange_contract=ocean.fixed_rate_exchange.address,
+
+        exchange_id=algo_exchange_id,
+        max_base_token_amount=to_wei(10),
+        consume_market_swap_fee_amount=to_wei("0.001"),  # 1e15 => 0.1%
+        consume_market_swap_fee_address=consumer_A_wallet.address,
+        from_wallet=consumer_A_wallet,
+    )
+
+# set transaction id
+ALGO_compute_input.transfer_tx_id = tx_algo
+```
+
+<br />
+
+### If the Asset is Free Price
+
+In the same python console (Free Pricing Asset):
+
+```python
+algo_provider_fees = fees_response["algorithm"]["providerFee"]
+
+tx_algo = algo_erc20_enterprise_token.buy_from_dispenser_and_order(
+        consumer=environments[0]["consumerAddress"],
+        service_index=0,
+        provider_fee_address= algo_provider_fees["providerFeeAddress"],
+        provider_fee_token=algo_provider_fees["providerFeeToken"],
+        provider_fee_amount=algo_provider_fees["providerFeeAmount"],
+        v=algo_provider_fees["v"],
+        r=algo_provider_fees["r"],
+        s=algo_provider_fees["s"],
+        valid_until=algo_provider_fees["validUntil"],
+        provider_data=algo_provider_fees["providerData"],
+        consume_market_order_fee_address=consumer_A_wallet.address,
+        consume_market_order_fee_token=algo_erc20_enterprise_token.address,
+        consume_market_order_fee_amount=0,
+        dispenser_address=ocean.dispenser.address,
+        from_wallet=consumer_A_wallet,
+    )
+
+# set transaction id
+ALGO_compute_input.transfer_tx_id = tx_algo
+```
+
+<br />
+
+## 6. ConsumerA starts a compute job
 
 In the same python console:
 
 ```python
 # run job
-compute_inputs = [ComputeInput(DATA_did, DATA_order_tx_id, compute_service.index)]
 job_id = ocean.compute.start(
-    compute_inputs,
-    consumer_A_wallet,
-    algorithm_did=ALG_did,
-    algorithm_tx_id=ALG_order_tx_id,
-    algorithm_data_token=algo_token_address
+    consumer_wallet=consumer_A_wallet,
+    dataset=DATA_compute_input,
+    compute_environment=environments[0]["id"],
+    algorithm=ALGO_compute_input
 )
 print(f"Started compute job with id: {job_id}")
 ```
 
 <br />
 
-## 5. ConsumerA monitors logs / algorithm output
+## 7. ConsumerA monitors logs / algorithm output
 
 In the same python console:
 
 ```python
 # ConsumerA check job status
-print(ocean.compute.status(DATA_did, job_id, consumer_A_wallet))
+# Wait until job is done
+import time
+from decimal import Decimal
+succeeded = False
+for _ in range(0, 200):
+    status = ocean.compute.status(DATA_asset, compute_service, job_id, consumer_A_wallet)
+    print("status================")
+    print(status)
+    if status.get("dateFinished") and Decimal(status["dateFinished"]) > 0:
+        succeeded = True
+        break
+    time.sleep(5)
 
 # ============================================================================================
 # ConsumerA get result (After job finished)
 
-result_file = ocean.compute.result_file(DATA_did, job_id, 0, consumer_A_wallet)  # 0 index, means we retrieve the results from the first dataset index
+# 0 index, means we retrieve the results from the first dataset index
+result_file = ocean.compute.compute_job_result_logs(
+    DATA_asset, compute_service, job_id, consumer_A_wallet
+)[0]
 print(result_file)
 ```
