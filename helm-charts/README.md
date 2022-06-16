@@ -66,7 +66,7 @@ Note: Modify the helm charts according on your own Kubernetes cluster setup when
 By default, all helm charts are predefined with public docker images available in Acentrik's Amazon Elastic Container Registry (Amazon ECR), as following public registry
 
 ```
-public.ecr.aws/j0e7f6c1
+public.ecr.aws/acentrik
 ```
 
 Optionally you can pull and mirror all the required images to your own private registry if necessary.
