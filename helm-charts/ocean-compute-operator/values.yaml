@@ -3,7 +3,7 @@ namespace: ocean-compute
 
 ## market image version
 image:
-  repository: public.ecr.aws/j0e7f6c1/oceanprotocol/operator-engine
+  repository: public.ecr.aws/acentrik/oceanprotocol/operator-engine
   tag: jobcleanup-hotfix
   ## Specify a imagePullPolicy
   pullPolicy: Always
