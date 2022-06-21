@@ -243,7 +243,7 @@ metadata = {
       "container": {
         "checksum": "",
         "entrypoint": "python $ALGO",
-        "image": "public.ecr.aws/j0e7f6c1/oceanprotocol/algo_dockers",
+        "image": "public.ecr.aws/acentrik/oceanprotocol/algo_dockers",
         "tag": "python-panda"
       },
       "language": "python3.7",

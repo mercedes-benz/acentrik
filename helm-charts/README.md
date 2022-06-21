@@ -42,7 +42,7 @@ Alternatively you can pull from the mirror images in Acentrik's Amazon Elastics 
 **Acentrik Public Registry**
 
 ```
-public.ecr.aws/j0e7f6c1
+public.ecr.aws/acentrik
 ```
 
 <br />
