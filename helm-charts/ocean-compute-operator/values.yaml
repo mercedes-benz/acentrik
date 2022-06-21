@@ -21,7 +21,8 @@ secretstore:
 ## Secret relevant values or keys, depends on secretstore flag
 secret:
   postgres:
-    db: postgresdb
+    db:
+      postgresdb
       #objectName: parameter name
       #objectType: "secretsmanager" or "ssmparameter"
     user: postgresadmin
@@ -55,8 +56,8 @@ config:
     expiryTime: "1440h"
   storageClass: standard
   pod:
-    configurationContainer: public.ecr.aws/j0e7f6c1/oceanprotocol/pod-configuration:v1.0.9
-    publishContainer: public.ecr.aws/j0e7f6c1/oceanprotocol/pod-publishing:secure_outputs
+    configurationContainer: public.ecr.aws/acentrik/oceanprotocol/pod-configuration:v1.0.9
+    publishContainer: public.ecr.aws/acentrik/oceanprotocol/pod-publishing:secure_outputs
   log:
     level: info
   debug:

@@ -1,6 +1,6 @@
 ## market image version
 image:
-  repository: public.ecr.aws/j0e7f6c1/library/postgres
+  repository: public.ecr.aws/acentrik/library/postgres
   tag: 10.4
   ## Specify a imagePullPolicy
   pullPolicy: IfNotPresent
@@ -41,20 +41,20 @@ storageclass:
   ## AWS provisioner
   #  provisioner: kubernetes.io/aws-ebs
   #  parameters:
-    #  fsType: ext4
-    #  type: gp2
+  #  fsType: ext4
+  #  type: gp2
   #  allowedTopologies:
-    #  enabled: true
-    #  matchLabelExpressions:
-    #  - key: topology.kubernetes.io/zone
-    #    values:
-    #    - ap-southeast-1b
-    #  - key: failure-domain.beta.kubernetes.io/zone
-    #    values:
-    #  - ap-southeast-1b
+  #  enabled: true
+  #  matchLabelExpressions:
+  #  - key: topology.kubernetes.io/zone
+  #    values:
+  #    - ap-southeast-1b
+  #  - key: failure-domain.beta.kubernetes.io/zone
+  #    values:
+  #  - ap-southeast-1b
 
   ## Azure provisioner
   #  provisioner: kubernetes.io/azure-disk
   #  parameters:
-    #  kind: Managed
-    #  storageaccounttype: StandardSSD_LRS
+  #  kind: Managed
+  #  storageaccounttype: StandardSSD_LRS
