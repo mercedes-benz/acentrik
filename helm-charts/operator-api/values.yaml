@@ -3,7 +3,7 @@ namespace: ocean-operator
 
 ## market image version
 image:
-  repository: public.ecr.aws/j0e7f6c1/oceanprotocol/operator-service
+  repository: public.ecr.aws/acentrik/oceanprotocol/operator-service
   tag: v4main
   ## Specify a imagePullPolicy
   pullPolicy: Always
