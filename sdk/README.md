@@ -15,7 +15,7 @@ With ocean.py, you can:
 
 - Python 3.8.5+
 - Ocean.py
-  - Either install using (pip install 'ocean-lib>=v1.0.0-alpha.4')
+  - Either install using (pip install 'ocean-lib>=v1.0.0')
   - or pull latest ocean.py code (https://github.com/oceanprotocol/ocean.py) & build it (pip install ./ocean.py/ )
 - Create a config.ini and fill in as below (Example are with Polygon network)
 
