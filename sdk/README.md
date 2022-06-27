@@ -15,7 +15,7 @@ With ocean.py, you can:
 
 - Python 3.8.5+
 - Ocean.py
-  - Either install using (pip install 'ocean-lib>=v1.0.0')
+  - Either install using (pip install 'ocean-lib>=v1.0.0-alpha.4')
   - or pull latest ocean.py code (https://github.com/oceanprotocol/ocean.py) & build it (pip install ./ocean.py/ )
 - Create a config.ini and fill in as below (Example are with Polygon network)
 
@@ -28,6 +28,7 @@ With ocean.py, you can:
 network = https://matic-mainnet.chainstacklabs.com #network
 network_name = polygon  #networkName
 chain_id = 137  #networkID
+gas_limit = 1000001
 
 address.file =  /home/ubuntu/contracts-artifacts/address.json
 
