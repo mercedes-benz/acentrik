@@ -4,7 +4,7 @@ namespace: ocean-compute
 ## market image version
 image:
   repository: public.ecr.aws/acentrik/oceanprotocol/operator-engine
-  tag: v4main
+  tag: ak-v1.0.0
   ## Specify a imagePullPolicy
   pullPolicy: Always
 
@@ -62,12 +62,14 @@ config:
     port: "5432"
   storageClass: standard
   pod:
-    configurationContainer: public.ecr.aws/acentrik/oceanprotocol/pod-configuration:v4main
-    publishContainer: public.ecr.aws/acentrik/oceanprotocol/pod-publishing:v4main
+    configurationContainer: public.ecr.aws/acentrik/oceanprotocol/pod-configuration:ak-v1.0.0
+    publishContainer: public.ecr.aws/acentrik/oceanprotocol/pod-publishing:ak-v1.0.0
   log:
     level: INFO
   debug:
     noCleanup: false
+  serviceAccount: default
+  maxJobDuration: "900"
 
 ## Configure pod resources
 # resources:
