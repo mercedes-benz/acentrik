@@ -1,5 +1,25 @@
 # Edge Node Guidelines and Setup Instructions
 
+- [Overview](#overview)
+- [Prerequisites](#prerequisites)
+- [Tools](#tools)
+- [Installation](#installation)
+  - [Container Registry](#container-registry)
+  - [Customize Provider Deployment](#customize-your-provider-deployment)
+  - [Customize Operator-Service Deployment](#customize-your-operator-service-deployment)
+  - [Customize Operator-Engine Deployment](#customize-your-operator-engine-deployment)
+- [Post Installation](#post-installation)
+- [Best Practice](#best-practice)
+
+---
+
+## Overview
+An edge node contains 3 major components: Provider, Operator-Service and Operator-Engine
+
+![component overview](./edge-node-overview.png)
+
+---
+
 ## Prerequisites
 
 First, the following resources are required for a proper runtime environment setup:
@@ -9,80 +29,93 @@ First, the following resources are required for a proper runtime environment set
    - Public IPFS gateway
    - Private IPFS gateway
    - Acentrik's private IPFS gateway\*
-2. Own-managed PostgreSQL database (recommended stable version of Release 12.6)
-3. An Ether wallet (MetaMask) account for the provider and Compute-to-Data (C2D) engine
-4. An Ethereum RPC service provider account (such as Infura)
+2. Own-managed PostgreSQL database (recommended stable version of Release 12.6 and above)
+3. An Ether wallet (MetaMask) account for the Provider and Compute-to-Data (C2D) engine
+4. An Ethereum RPC service provider account which supported Polygon network (such as Infura, Chainstack, Alchemy)
 5. Own-managed Kubernetes environment
-6. A DockerHub subscription account with a decent pull rate limit
+6. Redis for stateless provider setup to support High Availability (Optional)
 
 \*Note: Relevant T&Cs will be applied for usage of Acentrik's Decentralized Storage. Dedicated API Client ID and Key will be distributed.
 
-<br />
+---
+
+## Tools
+
+1. Helm 3 CLI - [install](https://helm.sh/docs/intro/install/)
+2. kubectl CLI - [install](https://kubernetes.io/docs/tasks/tools/#kubectl)
+3. curl CLI - [install](https://curl.se/download.html)
+
+---
 
 ## Installation
 
 Deploy the following helm chart with appropriate customized values. The download links for each helm charts will be provided.
 
-|     | Helm Chart                                         | Recommended Namespace          | Right Aligned                                                                       |
+|     | Helm Chart                                         | Recommended Namespace          | Description                                                                       |
 | :-- | :------------------------------------------------- | :----------------------------- | ----------------------------------------------------------------------------------- |
-| 1   | [provider](./provider)                             | network specific, e.g. rinkeby | An Ethereum network-specific deployment object to serve an interface to Marketplace |
+| 1   | [provider](./provider)                             | network specific, e.g. polygon | An Ethereum network-specific deployment object to serve an interface to Marketplace |
 | 2   | [operator-api](./operator-api)                     | ocean-operator                 | An Ethereum network-independent deployment object to manage all C2D requests        |
 | 3   | [ocean-compute-operator](./ocean-compute-operator) | ocean-compute                  | An Ethereum network-independent deployment object to execute the actual C2D jobs    |
 
-Note: Modify the helm charts according on your own Kubernetes cluster setup when necessary. Alternatively you can deploy the standard Kubernetes yaml objects.
+Note: Modify the helm charts according on your own Kubernetes cluster setup when necessary. Alternatively you can deploy the standard Kubernetes objects by creating your own deployment yaml files.
 
 <br />
 
-### Docker image registry
+### Container registry
 
-By default, all helm charts are predefined with standard DockerHub images.
-
-Alternatively you can pull from the mirror images in Acentrik's Amazon Elastics Container Registry (Amazon ECR), or setup your own private registry if any.
-
-**Acentrik Public Registry**
+By default, all helm charts are predefined with public docker images available in Acentrik's Amazon Elastic Container Registry (Amazon ECR), as following public registry
 
 ```
 public.ecr.aws/acentrik
 ```
 
+Optionally you can pull and mirror all the required images to your own private registry if necessary.
+
 <br />
 
-## [Customize your Provider deployment](./provider)
+### [Customize your Provider deployment](./provider)
 
-| Variable                    | Description                                                                                |
-| --------------------------- | ------------------------------------------------------------------------------------------ |
-| secret.infuraProjectId      | Ethereum RPC Project ID                                                                    |
-| secret.providerPrivateKey\* | Private key of your provider wallet account, which used to encrypt the data asset endpoint |
-| config.networkUrl           | Network name: rinkeby, mainnet, polygon                                                    |
-| config.ipfsGateway          | Your IPFS Gateway if any                                                                   |
-| config.operatorServiceUrl   | Your custom operator service endpoint URL                                                  |
-| config.aquariusUrl\*\*      | Predefined Aquarius URL of a selected network                                              |
+| Variable                     | Description                                                                                                             |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| secret.infuraProjectId       | Ethereum RPC Project ID                                                                                                 |
+| secret.providerPrivateKey\*  | Private key of your provider wallet account, which used to encrypt the data asset endpoint                              |
+| config.networkUrl            | Network name: polygon                                                                                                   |
+| config.redisConnection\*\*   | Connection URL to Redis. Defaults to None (no Redis connection, SQLite database embedded with provider is used instead) |
+| config.ipfsGateway           | Your IPFS Gateway if any                                                                                                |
+| config.operatorServiceUrl    | Your custom operator service endpoint URL                                                                               |
+| config.aquariusUrl\*\*\*     | Predefined Aquarius URL of multi-chain network                                                                          |
+| config.rbacUrl\*\*\*\*       | URL to the RBAC permissions server. Defaults to Acentrik RBAC Server                                                    |
+| config.log.level             | Logging level                                                                                                           |
+| config.allowNonPublicIp      | Allow Non Public IP to access from Provider                                                                             |
 
-- Private Key
-  - The secret half of your Address / public key
-  - A string of 64 hexadecimal characters
-  - Private key is unique to each wallet account
-  - Example: afdfd9c3d2095ef696594f6cedcae59e72dcd697e2a7521b1578140422a4f890
-  - As standard, the key will be stored as Kubernetes Secret. However, it is possible to integrate with an external secret provider depends on your distributed architecture infrastructure setup
+\*Provider Private Key
+- The secret hash of your Ether wallet account
+- A string of 64 hexadecimal characters
+- Private key is unique to each wallet account
+- Example: afdfd9c3d2095ef696594f6cedcae59e72dcd697e2a7521b1578140422a4f890
+- As standard, the key will be stored as Kubernetes Secret. However, it is possible to integrate with an external secret provider depends on your distributed architecture infrastructure setup
 
-\*\* Aquarius URL refer to https://aquarius.<network\>.acentrik.io
+\*\* Redis acting as a shared cache storage is highly recommended to support multi-replicas setup of provider service which ensure high availability. Without Redis, only 1 replica is supported.
 
-**Steps**
+\*\*\* Aquarius URL refer to https://aquarius.acentrik.io (DO NOT change)
+
+\*\*\*\* RBAC URL refer to https://rbac.acentrik.io (DO NOT change)
+
+#### Steps
+Copy and modify the default helm values file as a new custom-values.yaml
 
 ```
-cd <ocean-compute-operator chart directory>
-
-helm upgrade provider ./ \
+helm upgrade provider ./provider \
     --install \
-    --namespace rinkeby \
-    -f ./values-dev-rinkeby.yaml \
+    --namespace polygon \
+    -f ./provider/custom-values.yaml \
     --debug \
     --render-subchart-notes
 ```
 
 <br />
 
-## [Customize your Operator Service deployment](./operator-api)
+### [Customize your Operator-Service deployment](./operator-api)
 
 | Variable                            | Description                                                                                                       |
 | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -93,6 +126,9 @@ helm upgrade provider ./ \
 | secret.postgres.port                | PostgreSQL operator database port                                                                                 |
 | config.operatorAddress              | Public address of your provider wallet account                                                                    |
 | config.algoPodTimeout               | Allowed time (in seconds) for an algorithm to run. After timeout, the relevant execution pods will be terminated. |
+| config.signatureRequired            | 0 -> no signature required, 1 -> request brizo signature                                                          |
+| config.allowedProviders             | Json array with allowed providers that can access the endpoints                                                   |
+| config.defaultNamespace             | namespace which will run the jobs                                                                                 |
 | config.resource.inputVolumeSize     | Compute engine container input file volume size, value should include unit.                                       |
 | config.resource.outputVolumeSize    | Compute engine container output file volume size, value should include unit.                                      |
 | config.resource.adminLogsVolumeSize | Compute engine container log file volume size, value should include unit.                                         |
@@ -101,22 +137,21 @@ helm upgrade provider ./ \
 | config.resource.limitsCpu           | Compute engine container request maximum CPU, value should include unit.                                          |
 | config.resource.limitsMemory        | Compute engine container request maximum memory, value should include unit.                                       |
 
-**Steps**
+#### Steps
+Copy and modify the default helm values file as a new custom-values.yaml
 
 ```
-cd <operator-api chart directory>
-
-helm upgrade operator-api ./ \
+helm upgrade operator-api ./operator-api \
     --install \
     --namespace ocean-operator \
-    -f ./values-dev.yaml \
+    -f ./operator-api/custom-values.yaml \
     --debug \
     --render-subchart-notes
 ```
 
 <br />
 
-## [Customize your Compute Engine deployment](./ocean-compute-operator)
+### [Customize your Operator-Engine deployment](./ocean-compute-operator)
 
 | Variable                           | Description                                                                                                 |
 | ---------------------------------- | ----------------------------------------------------------------------------------------------------------- |
@@ -125,7 +160,7 @@ helm upgrade operator-api ./ \
 | secret.postgres.password           | PostgreSQL operator database password                                                                       |
 | secret.postgres.host               | PostgreSQL operator database hostname                                                                       |
 | secret.postgres.port               | PostgreSQL operator database port                                                                           |
-| secret.postgres.operatorPrivateKey | Private key of your operator wallet account                                                                 |
+| secret.operatorPrivateKey          | Private key of your operator wallet account                                                                 |
 | config.aws.enabled                 | Allowed AWS S3 bucket for compute data storage                                                              |
 | secret.aws.accessKeyId             | AWS IAM user account access key ID to access S3 bucket                                                      |
 | secret.aws.secretAccessKey         | AWS IAM user account access secret key to access S3 bucket                                                  |
@@ -136,47 +171,51 @@ helm upgrade operator-api ./ \
 | config.ipfs.adminlogs              | IPFS API endpoint to store compute log files                                                                |
 | config.ipfs.outputPrefix           | IPFS API endpoint for end-user to download compute output files                                             |
 | config.ipfs.adminlogsPrefix        | IPFS API endpoint for end-user to download compute log files                                                |
-| secret.ipfs.apiKey                 | IPFS API Key for authentication purpose (optional)                                                          |
-| secret.ipfs.apiClient              | IPFS API Client ID for authentication purpose (optional)                                                    |
+| config.ipfs.expiryTime             | IPFS ExpiryTime                                                                                             |
+| config.storageClass                | Storage class to use                                                                                        |
+| config.pod.configurationContainer  | Configuration Container Image                                                                               |
+| config.pod.publishContainer        | Publish Container Image                                                                                     |
+| config.log.level                   | Logging Level                                                                                               |
+| config.debug.noCleanup             | Clean Up after Compute job finished                                                                         |
+| config.serviceAccount              | K8 service account to run pods. Defaults to 'default'                                                       |
+| secret.ipfs.apiKey\*               | IPFS API Key for authentication purpose (optional)                                                          |
+| secret.ipfs.apiClient\*            | IPFS API Client ID for authentication purpose (optional)                                                    |
 
-**Steps**
+\*\* Dedicated API Client ID and Key will be distributed for usage of Acentrik's Decentralized Storage
+
+#### Steps
+Copy and modify the default helm values file as a new custom-values.yaml
 
 ```
-cd <ocean-compute-operator chart directory>
-
-helm upgrade ocean-compute-operator ./ \
+helm upgrade ocean-compute-operator ./ocean-compute-operator \
     --install \
     --namespace ocean-compute \
-    -f ./values-dev.yaml \
+    -f ./ocean-compute-operator/custom-values.yaml \
     --debug \
     --render-subchart-notes
 ```
 
-<br />
+---
 
 ## Post-installation
 
 ### Initialize database
+The newly created edge node must be initialized after the installation completed.
 
-If your operator-api service is running on namespace ocean-operator with port 8050:
+Assuming your Operator-Service (operator-api) is running on namespace 'ocean-operator' with port 8050, perform the following actions.
 
+Portfoward to the running operator-api service
 ```
-
 kubectl port-forward service/operator-api 8050:8050 -n ocean-operator
+```
+
+Run a curl command to call the initialization REST API
+```
 curl -X POST "http://localhost:8050/api/v1/operator/pgsqlinit" -H "accept: application/json"
-
 ```
 
-### Update provider
+---
 
-Update Provider deployment by adding or updating the OPERATOR_SERVICE_URL environment variable:
-
-```
-OPERATOR_SERVICE_URL: http://operator-api.ocean-operator.svc.cluster.local:8050
-```
-
-<br />
-
-### Best Practice
+## Best Practice
 
 For more information, refer to: https://support.acentrik.io/help/en-us/10/10
