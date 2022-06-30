@@ -86,6 +86,11 @@ spec:
             configMapKeyRef:
               key: REQUEST_RETRIES
               name: {{ .Release.Name }}-config
+        - name: PROVIDER_FEE_TOKEN
+          valueFrom:
+            configMapKeyRef:
+              key: PROVIDER_FEE_TOKEN
+              name: {{ .Release.Name }}-config
         {{- if .Values.secret.redisConnection }}
         - name: REDIS_CONNECTION
           valueFrom:

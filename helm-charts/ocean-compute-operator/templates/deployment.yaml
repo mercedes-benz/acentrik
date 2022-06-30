@@ -114,7 +114,15 @@ spec:
               key: POD_PUBLISH_CONTAINER
               name: {{ .Release.Name }}-config
         - name: SERVICE_ACCOUNT
-          value: default
+          valueFrom:
+            configMapKeyRef:
+              key: SERVICE_ACCOUNT
+              name: {{ .Release.Name }}-config
+        - name: maxJobDuration
+          valueFrom:
+            configMapKeyRef:
+              key: MAX_JOB_DURATION
+              name: {{ .Release.Name }}-config
         - name: POSTGRES_DB
           valueFrom:
             secretKeyRef:

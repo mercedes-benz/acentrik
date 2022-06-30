@@ -36,6 +36,7 @@ data:
   REQUEST_RETRIES: {{ .Values.config.requestRetries | quote }}
   AUTHORIZED_DECRYPTERS: {{ .Values.config.authorizedDecrypters | quote }}
   ALLOW_NON_PUBLIC_IP: {{ .Values.config.allowNonPublicIp | quote }}
+  PROVIDER_FEE_TOKEN: {{ .Values.config.providerFeeToken | quote }}
 kind: ConfigMap
 metadata:
   annotations:

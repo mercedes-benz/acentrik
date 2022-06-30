@@ -1,7 +1,7 @@
 ## market image version
 image:
   repository: public.ecr.aws/acentrik/oceanprotocol/provider-py
-  tag: v4main
+  tag: ak-v1.0.0
   ## Specify a imagePullPolicy
   pullPolicy: Always
 
@@ -25,15 +25,17 @@ secret:
 ## ConfigMap relevant values
 config:
   oceanProviderUrl: http://0.0.0.0:8030
-  oceanProviderWorkers: "1"
+  oceanProviderWorkers: "10"
   oceanProviderTimeout: "9000"
   operatorServiceUrl: https://operator-api.acentrik.io
   aquariusUrl: https://aquarius.acentrik.io
   rbacUrl: https://rbac.acentrik.io
   requestRetries: "3"
+  authorizedDecrypters: '["0x97fE0fC2a067b6A6d75D194CE2E6413f059a5E43"]'
   log:
     level: INFO
-  allowNonPublicIp: "False"
+  allowNonPublicIp: "0"
+  providerFeeToken: "0x2791Bca1f2de4661XXXXXXXXXXXXXXXXXXXXXx"
 
 podAutoScaler:
   enabled: true
