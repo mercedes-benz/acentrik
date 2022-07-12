@@ -52,7 +52,7 @@ from ocean_lib.config import Config
 from ocean_lib.ocean.ocean import Ocean
 config = Config('config.ini')
 ocean = Ocean(config)
-from ocean_lib.models.erc20_enterprise import ERC20Enterprise
+from ocean_lib.models.datatoken_enterprise import DatatokenEnterprise
 import json
 
 # print(f"ocean.exchange._exchange_address = '{ocean.exchange._exchange_address}'")
@@ -84,7 +84,7 @@ In the same python console (Fixed Pricing Asset):
 ```python
 usdc_token = ocean.get_datatoken(ocean.web3.toChecksumAddress(base_token_address))
 
-erc20_enterprise_token = ERC20Enterprise(ocean.web3, ocean.web3.toChecksumAddress(token_address))
+erc20_enterprise_token = DatatokenEnterprise(ocean.web3, ocean.web3.toChecksumAddress(token_address))
 
 
 consumer_private_key = os.getenv('TEST_PRIVATE_KEY2')

@@ -198,16 +198,15 @@ from ocean_lib.agreements.service_types import ServiceTypes
 url_file = UrlFile(
     url="https://project-sgx-datasets.s3.ap-southeast-1.amazonaws.com/Others/Heart.py"
 )
-encrypted_files = ocean.assets.encrypt_files([url_file])
 
-service_id = hashlib.sha256((data_token.address + encrypted_files).encode()).hexdigest()
+service_id = hashlib.sha256((data_token.address).encode()).hexdigest()
 
 service = [Service(
     service_id=service_id,
     service_type=ServiceTypes.ASSET_ACCESS,
     service_endpoint=config.provider_url,
     datatoken=data_token.address,
-    files=encrypted_files,
+    files=[url_file],
     timeout=3600,
     name="Download service for SDK",
     compute_values=None,
@@ -269,7 +268,7 @@ service = [Service(
     service_type=ServiceTypes.ASSET_ACCESS,
     service_endpoint=config.provider_url,
     datatoken=data_token.address,
-    files=encrypted_files,
+    files=[url_file],
     timeout=3600,
     name="Service for SDK",
     compute_values=None,
@@ -321,7 +320,7 @@ service = [Service(
     service_type=ServiceTypes.CLOUD_COMPUTE,
     service_endpoint=config.provider_url,
     datatoken=data_token.address,
-    files=encrypted_files,
+    files=[url_file],
     timeout=3600,
     name="Service for SDK",
     compute_values=compute_value,
@@ -356,11 +355,11 @@ In the same python console:
 asset = ocean.assets.create(
     metadata,
     publisher_A_wallet,
-    encrypted_files,
+    [url_file],
     services=service,
     provider_uri=config.provider_url,
-    erc721_address= nft_address,
-    deployed_erc20_tokens=[data_token],
+    data_nft_address= nft_address,
+    deployed_datatokens=[data_token],
     encrypt_flag=True
 )
 

@@ -14,6 +14,8 @@ With ocean.py, you can:
 ### Prerequisites
 
 - Python 3.8.5+
+- pip install wheel
+- pip install --pre ocean-lib
 - Ocean.py
 
   - Either install using (pip install 'ocean-lib>=v1.0.0-alpha.4')
