@@ -315,6 +315,11 @@ ALGO_compute_input.transfer_tx_id = tx_algo
 
 ## 6. ConsumerA starts a compute job
 
+### Disclaimer
+
+Please reuse a transaction ID if its not expired, so you wont be paying for the transaction fee again.
+You can get your previous transaction on a dataToken using the method `erc20_enterprise_token.get_start_order_logs()` & just consume the asset using the transaction id, it will check if the asset is still consumable.
+
 In the same python console:
 
 ```python
