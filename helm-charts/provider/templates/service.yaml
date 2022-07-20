@@ -7,11 +7,11 @@ metadata:
   name: {{ .Release.Name }}
 spec:
   ports:
-  - name: {{ .Release.Name }}
-    port: 8030
-    protocol: TCP
-    targetPort: 8030
+    - name: {{ .Release.Name }}
+      port:  {{ .Values.service.servicePort | default "8030" }}
+      protocol: TCP
+      targetPort: 8030
   selector:
     app: {{ .Release.Name }}
   sessionAffinity: None
-  type: ClusterIP
+  type: {{ .Values.service.type | default "ClusterIP" }}
