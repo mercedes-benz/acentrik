@@ -19,7 +19,7 @@ secretstore:
 secret:
   infuraProjectId: <INFURA_PROJECT_ID>
   providerPrivateKey: changeme
-  networkUrl: rinkeby
+  networkUrl: <RPC_URL>
   redisConnection: rediss://:PASSWORD@HOST:PORT
 
 ## ConfigMap relevant values
