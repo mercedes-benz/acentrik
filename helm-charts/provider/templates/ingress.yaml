@@ -21,8 +21,8 @@ spec:
           service:
             name: {{ $.Release.Name }}
             port:
-              number: 8030
-        pathType: ImplementationSpecific
+              number: {{ $.Values.service.servicePort | default "8030" }}
+        pathType: {{ $.Values.ingress.pathType | default "ImplementationSpecific" }}
   {{- end }}
   tls:
 {{- range .Values.ingress.hosts }}
