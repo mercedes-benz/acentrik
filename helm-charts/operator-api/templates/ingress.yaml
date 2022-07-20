@@ -13,7 +13,7 @@ metadata:
 spec:
   rules:
   {{- range .Values.ingress.hosts }}
-  - host:
+  - host: {{ .name }}
     http:
       paths:
       - path: {{ default "/" .path }}
