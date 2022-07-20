@@ -8,10 +8,10 @@ metadata:
 spec:
   ports:
   - name: {{ .Release.Name }}
-    port: 8050
+    port:  {{ .Values.service.servicePort | default "8050" }}
     protocol: TCP
     targetPort: 8050
   selector:
     app: {{ .Release.Name }}
   sessionAffinity: None
-  type: ClusterIP
+  type: {{ .Values.service.type | default "ClusterIP" }}
