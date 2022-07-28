@@ -57,7 +57,7 @@ config:
   storageClass: standard
   pod:
     configurationContainer: public.ecr.aws/acentrik/oceanprotocol/pod-configuration:ak-v1.0.0
-    publishContainer: public.ecr.aws/acentrik/oceanprotocol/pod-publishing:ak-v1.0.0
+    publishContainer: public.ecr.aws/acentrik/oceanprotocol/pod-publishing:ak-v1.0.1
   log:
     level: INFO
   debug:
