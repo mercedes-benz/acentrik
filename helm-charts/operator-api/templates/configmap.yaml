@@ -14,6 +14,7 @@ data:
   LIMITS_MEMORY: {{ .Values.config.resource.limitsMemory | quote }}
   STORAGE_EXPIRY: {{ .Values.config.storageExpiry | quote }}
   LOG_LEVEL: {{ .Values.config.log.level }}
+  .dockerenv: ""
 kind: ConfigMap
 metadata:
   annotations:

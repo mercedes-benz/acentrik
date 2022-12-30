@@ -163,14 +163,20 @@ spec:
 {{ toYaml .Values.resources | indent 10 }}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
-        {{- if .Values.secretstore.enabled }}
         volumeMounts:
+        - name: env-file
+          mountPath: /.dockerenv
+          subPath: .dockerenv
+        {{- if .Values.secretstore.enabled }}
         - name: {{ .Release.Name }}-{{ .Values.secretstore.provider }}-secrets
           mountPath: /mnt/secrets-store/
           readOnly: true
         {{- end }}
-      {{- if .Values.secretstore.enabled }}
       volumes:
+      - name: env-file
+        configMap:
+          name: {{ .Release.Name }}-config
+      {{- if .Values.secretstore.enabled }}
       - name: {{ .Release.Name }}-{{ .Values.secretstore.provider }}-secrets
         csi:
           driver: secrets-store.csi.k8s.io
@@ -180,8 +186,6 @@ spec:
       {{- end }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
-      serviceAccount: {{ .Release.Name }}
-      serviceAccountName: {{ .Release.Name }}
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30

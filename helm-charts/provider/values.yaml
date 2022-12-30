@@ -6,7 +6,7 @@ image:
   pullPolicy: Always
 
 ## Set desired pod ReplicaSet
-replica: 2
+replica: 1
 
 ## Enable/Disable Kubernetes Secrets Store CSI Driver. Currently only support AWS provider.
 ## ref: https://secrets-store-csi-driver.sigs.k8s.io
@@ -28,8 +28,8 @@ config:
   oceanProviderWorkers: "10"
   oceanProviderTimeout: "9000"
   operatorServiceUrl: http://operator-api.ocean-operator.svc.cluster.local:8050
-  aquariusUrl: https://aquarius.acentrik.io
-  rbacUrl: https://rbac.acentrik.io
+  aquariusUrl: https://v1.aquarius.acentrik.io
+  rbacUrl: https://v1.rbac.acentrik.io
   requestRetries: "3"
   authorizedDecrypters: '["0x97fE0fC2a067b6A6d75D194CE2E6413f059a5E43"]' ## Aquarius wallet address
   log:
