@@ -40,7 +40,7 @@ secret:
 ## ConfigMap and secret relevant values
 config:
   operatorAddress: ""
-  algoPodTimeout: "300"
+  algoPodTimeout: "3600"
   storageExpiry: "5184000"
   signatureRequired: "0"
   allowedProviders: ""
