@@ -25,26 +25,30 @@ An edge node contains 3 major components: Provider, Operator-Service and Operato
 
 First, the following resources are required for a proper runtime environment setup:
 
-1. Own-managed Storage (either one below), for secure storage of the compute output file.
+1. Own-managed Storage (either one below), for secure storage of the compute output file. (You can read more about setting up IPFS cluster on kubernetes [here](https://ipfscluster.io/documentation/guides/k8s/))
    - AWS S3 bucket
    - Public IPFS gateway
    - Private IPFS gateway
    - Acentrik's private IPFS gateway\*
 2. Own-managed PostgreSQL database (recommended stable version of Release 12.6 and above)
-3. An Ether wallet (MetaMask) account for the Provider and Compute-to-Data (C2D) engine
-4. An Ethereum RPC service provider account which supported Polygon network (such as Infura, Chainstack, Alchemy)
-5. Own-managed Kubernetes environment
-6. Redis for stateless provider setup to support High Availability (Optional)
 
-\*Note: Relevant T&Cs will be applied for usage of Acentrik's Decentralized Storage. Dedicated API Client ID and Key will be distributed.
+   Manual database creation is required before helm installation
+
+3. An Ether wallet (MetaMask) account for the Provider and Compute-to-Data (C2D) engine (You can read more about setting up a Metamask Wallet [here](https://support.acentrik.io/help/en-us/8-starter-kit/914-wallet-set-up-metamask-reference))
+4. An Ethereum RPC service provider account which supported Polygon network (such as Infura, Chainstack, Alchemy)
+5. Own-managed Kubernetes environment (Eg: EKS for AWS, AKS for Azure, GKE for GCP)
+6. Redis for stateless provider setup to support High Availability (Optional)
 
 ---
 
 ## Tools
 
 1. Helm 3 CLI - [install](https://helm.sh/docs/intro/install/)
-2. kubectl CLI - [install](https://kubernetes.io/docs/tasks/tools/#kubectl)
-3. curl CLI - [install](https://curl.se/download.html)
+   - Helm CLI are for helm chart installation, Edge Node will be deploying with Helm Chart
+2. Kubectl CLI - [install](https://kubernetes.io/docs/tasks/tools/#kubectl)
+   - Kubectl CLI are use to run commands against Kubernetes cluster
+3. ## curl CLI - [install](https://curl.se/download.html)
+   - curl is used in command lines or scripts to transfer data. Will be running a curl command to call the initialization REST API for operator-api service
 
 ---
 
@@ -210,6 +214,12 @@ The newly created edge node must be initialized after the installation completed
 
 Assuming your Operator-Service (operator-api) is running on namespace 'ocean-operator' with port 8050, perform the following actions.
 
+Check if operator service are running as expected, expected to see the pod are running with status 1/1
+
+```
+kubectl get pods -n ocean-operator
+```
+
 Portfoward to the running operator-api service
 
 ```
@@ -223,6 +233,12 @@ curl -X POST "http://localhost:8050/api/v1/operator/pgsqlinit" -H "accept: appli
 ```
 
 <br />
+
+---
+
+<br />
+
+## S3 As Edge Node Storage
 
 ### If you're choosing s3 bucket to store the compute outputs
 
@@ -323,7 +339,11 @@ Setup the bucket policy (Added a section for your AWS user so you can update the
 
 With this policy, you can block all public access on your S3 buckets.
 
+<br />
+
 ---
+
+<br />
 
 ## Best Practice
 
