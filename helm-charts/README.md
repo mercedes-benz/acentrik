@@ -47,7 +47,7 @@ First, the following resources are required for a proper runtime environment set
    - Helm CLI are for helm chart installation, Edge Node will be deploying with Helm Chart
 2. Kubectl CLI - [install](https://kubernetes.io/docs/tasks/tools/#kubectl)
    - Kubectl CLI are use to run commands against Kubernetes cluster
-3. ## curl CLI - [install](https://curl.se/download.html)
+3. curl CLI - [install](https://curl.se/download.html)
    - curl is used in command lines or scripts to transfer data. Will be running a curl command to call the initialization REST API for operator-api service
 
 ---
