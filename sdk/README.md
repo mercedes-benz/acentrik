@@ -16,37 +16,43 @@ With ocean.py, you can:
 - Python 3.8.5+
 - pip install wheel
 - pip install --pre ocean-lib
+
 - Ocean.py
 
-  - Either install using (pip install 'ocean-lib>=v1.0.0-alpha.4')
+  - Either install using (pip install 'ocean-lib>=v2.1.0')
   - or pull latest ocean.py code (https://github.com/oceanprotocol/ocean.py) & build it (pip install ./ocean.py/ )
   - ⚠️ Mac users: the ocean.py installation are not compatible with Apple M1 Processor[[Details](https://github.com/oceanprotocol/ocean.py/issues/486).]
 
-- Create a config.ini and fill in as below (Example are with Polygon network)
+<br />
 
-  - You are able to get the required details from Acentrik Developers Details Section
+- Configure Brownie networks
 
-    ![Copy info clipboard](./copy_info_clipboard.gif)
+  Brownie's network configuration file is in your home folder, at `~/.brownie/network-config.yaml` on Linux/MacOS systems. For Windows users, that means `C:\Users\<user_name>\.brownie\network-config.yaml`. If you have no prior brownie installation on your computer, in order to create this file, you need to call any brownie function from a python console, beforehand (e.g., run `from ocean_lib.example_config import get_config_dict`).
 
-```
-[eth-network]
-network = https://matic-mainnet.chainstacklabs.com #network
-network_name = polygon  #networkName
-chain_id = 137  #networkID
-gas_limit = 1000001
+  The network configuration file has settings for each network, e.g. development (ganache), Ethereum mainnet, Polygon, and Mumbai.
 
-address.file =  /home/ubuntu/contracts-artifacts/address.json
+  Each network gets specifications for:
 
-[resources]
-metadata_cache_uri = https://aquarius.acentrik.io  #metadataCacheUri
-provider.url = https://provider.polygon.acentrik.io  #providerUri
-provider.address = https://provider.polygon.acentrik.io  #providerUri
-downloads.path = /home/ubuntu/download-path/
-```
+  - `host` - the RPC URL, i.e. what URL do we pass through to talk to the chain
+  - `required_confs` - the number of confirmations before a tx is done
+  - `id` - e.g. `polygon-main` (Polygon), `polygon-test` (Mumbai)
 
-- Clone address file from [ocean contract repo](https://github.com/oceanprotocol/contracts/blob/v4main/addresses/address.json)
+  [Here's](https://github.com/eth-brownie/brownie/blob/master/brownie/data/network-config.yaml) the `network-config.yaml` from Brownie's GitHub repository. It can serve as a comparison to your local copy.
 
-  - This is the address.file that you filled in on config.ini
+  For Windows OS deployments, it is possible that the network-config.yaml does not include all the network entries. In this case, you can replace the content of the network-config.yaml file on your computer with the content from this [link](https://github.com/eth-brownie/brownie/blob/master/brownie/data/network-config.yaml).
+
+  `development` chains run locally; `live` chains run remotely.
+
+  Ocean.py follows the exact `id` name for the network's name from the default Brownie configuration file. Therefore, you need to ensure that your target network name matches the corresponding Brownie `id`.
+
+  <br />
+
+  The config file's default RPCs point to Infura, which require you to have an Infura account with corresponding token `WEB3_INFURA_PROJECT_ID`.
+
+  #### If you do have an Infura account
+
+  - Linux & MacOS users: in console: `export WEB3_INFURA_PROJECT_ID=<your infura ID>`
+  - Windows: in console: `set WEB3_INFURA_PROJECT_ID=<your infura ID>`
 
 <br />
 
@@ -58,8 +64,6 @@ export TEST_PRIVATE_KEY1=0xbbfbee4961061d506ffbb11dfea64eba16355cbf1d9c29613126b
 export TEST_PRIVATE_KEY2=0x804365e293b9fab9bd11bddd39082396d56d30779efbb3ffb0a6089027XXXXXX
 ```
 
-## Relevant Docs (Ocean)
+## Relevant Docs (Ocean Protocol)
 
-- Fixed Rate Exchange Flow : https://github.com/oceanprotocol/ocean.py/blob/v4main/READMEs/fixed-rate-exchange-flow.md
-- Compute-to-Data (C2D) Flow: https://github.com/oceanprotocol/ocean.py/blob/v4main/READMEs/c2d-flow.md
-- Enterprise ERC20 Flow: https://github.com/oceanprotocol/ocean.py/blob/v4main/READMEs/erc20-enterprise.md
+- https://github.com/oceanprotocol/ocean.py/tree/v2.1.0/READMEs
