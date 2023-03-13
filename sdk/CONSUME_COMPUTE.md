@@ -35,18 +35,22 @@ Create an asset_info.json file and filled up the asset details
 
 ```
 {
-  "network": "https://matic-mainnet.chainstacklabs.com",
-  "networkName": "polygon",
-  "networkID": 137,
-  "metadataCacheUri": "https://aquarius.acentrik.io",
-  "providerUri": "https://provider.polygon.acentrik.io",
-  "assetTokenAddress": "0x8748ef04C53974821F1174749c4B7A9486dbad19",
-  "assetDid": "did:op:8748ef04C53974821F1174749c4B7A9486dbad19",
-  "assetOwnerAddress": "0x2eCA8718b2fCaf0CF9E150ad4B44EE8c54473D2C",
-  "algorithmTokenAddress": "0xe75a2Ca6D9b184d9807A1A1B5AE9BE57e9c897cD",
-  "algorithmDid": "did:op:e75a2Ca6D9b184d9807A1A1B5AE9BE57e9c897cD",
-  "algorithmOwnerAddress": "0x500DB43EE6966e6213BA58EAF152dA593EB7432e"
+  "network": "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+  "networkName": "goerli",
+  "networkID": 5,
+  "aquariusUri": "https://v1.aquarius.dev.acentrik.io",
+  "assetProviderUri": "https://v1.provider.goerli.dev.acentrik.io",
+  "assetDid": "did:op:f65f1608596933043fb7d5239bbb8ee5094fae030e1bb351d6a3178030636bdb",
+  "assetTokenAddress": "0x8c7A2947a8Cb37acD02d9e60233462B0C69cC7f2",
+  "assetOwnerAddress": "0x002D6F48A56E864b910Bc219B63440C6F6508Fe4",
+  "assetBaseTokenAddress": "0x07865c6e87b9f70255377e024ace6630c1eaa37f",
+  "algorithmProviderUri": "https://v1.provider.goerli.dev.acentrik.io",
+  "algorithmDid": "did:op:2c33782e902687e4f6647e86c7408b5bae8cbe0923f970ed3adc2ed6c84395d8",
+  "algorithmTokenAddress": "0x127D5F22b7beee64263ED291065473365715547f",
+  "algorithmOwnerAddress": "0x2E33C6014222A47585605F8379a1877eaaF0ec13",
+  "algorithmBaseTokenAddress": "0x07865c6e87b9f70255377e024ace6630c1eaa37f"
 }
+
 ```
 
 <br />
@@ -60,63 +64,48 @@ Create an asset_info.json file and filled up the asset details
 In the Python console:
 
 ```python
-#create ocean instance
-from ocean_lib.config import Config
-from ocean_lib.ocean.ocean import Ocean
-config = Config('config.ini')
-ocean = Ocean(config)
-from ocean_lib.models.datatoken_enterprise import DatatokenEnterprise
+from web3.main import Web3
 import json
-
-print(f"ocean.exchange._exchange_address = '{ocean.exchange._exchange_address}'")
-print(f"config.network_url = '{config.network_url}'")
-print(f"config.block_confirmations = {config.block_confirmations.value}")
-print(f"config.metadata_cache_uri = '{config.metadata_cache_uri}'")
-print(f"config.provider_url = '{config.provider_url}'")
-
-from ocean_lib.web3_internal.currency import from_wei, to_wei
-import os
-from ocean_lib.web3_internal.wallet import Wallet
-
 # Read asset_info.json file
 asset_info = open('asset_info.json')
 data_asset_info = json.load(asset_info)
 asset_info.close()
 
+aquarius_uri = data_asset_info["aquariusUri"]
 DATA_did = data_asset_info["assetDid"]
 data_token_address =  data_asset_info["assetTokenAddress"]
 data_token_owner_address = data_asset_info["assetOwnerAddress"]
-
+data_token_ProviderUri = data_asset_info["assetProviderUri"]
 ALG_did = data_asset_info["algorithmDid"]
 algo_token_address = data_asset_info["algorithmTokenAddress"]
 algo_token_owner_address = data_asset_info["algorithmOwnerAddress"]
-base_token_address = data_asset_info["baseTokenAddress"]
+algo_token_ProviderUri = data_asset_info["algorithmProviderUri"]
 
-usdc_token = ocean.get_datatoken(ocean.web3.toChecksumAddress(base_token_address))
 
-asset_erc20_enterprise_token = DatatokenEnterprise(ocean.web3, ocean.web3.toChecksumAddress(data_token_address))
+# Create Ocean instance
+from ocean_lib.web3_internal.utils import connect_to_network
+connect_to_network("goerli")
+import os
+from ocean_lib.example_config import get_config_dict
+from ocean_lib.ocean.ocean import Ocean
+config = get_config_dict("goerli")
 
-algo_erc20_enterprise_token = DatatokenEnterprise(ocean.web3, ocean.web3.toChecksumAddress(algo_token_address))
+config['METADATA_CACHE_URI'] = aquarius_uri
+config['PROVIDER_URL'] = data_token_ProviderUri
 
-consumer_private_key = os.getenv('TEST_PRIVATE_KEY2')
-consumer_A_wallet = Wallet(ocean.web3, consumer_private_key, config.block_confirmations,  config.transaction_timeout)
-print(f"consumer_A_wallet.address = '{consumer_A_wallet.address}'")
+ocean = Ocean(config)
+from brownie.network import accounts
+from ocean_lib.models.datatoken2 import Datatoken2
+from ocean_lib.models.datatoken_base import DatatokenBase, TokenFeeInfo
+print(f"config.metadata_cache_uri = {config['METADATA_CACHE_URI']}")
+print(f"config.provider_url = {config['PROVIDER_URL']}")
 
-# Convenience variables
-DATA_asset = ocean.assets.resolve(DATA_did)
-ALGO_asset = ocean.assets.resolve(ALG_did)
 
-# Operate on updated and indexed assets
-compute_service = DATA_asset.services[0]
-algo_service = ALGO_asset.services[0]
-
-environments = ocean.compute.get_c2d_environments(compute_service.service_endpoint)
-
-from datetime import datetime, timedelta
-from ocean_lib.models.compute_input import ComputeInput
-
-DATA_compute_input = ComputeInput(DATA_asset, compute_service)
-ALGO_compute_input = ComputeInput(ALGO_asset, algo_service)
+from brownie.network.gas.strategies import GasNowStrategy
+from brownie import network
+gas_strategy = GasNowStrategy("fast")
+network.gas_limit("auto")
+network.gas_price("auto")
 ```
 
 <br />
@@ -126,9 +115,30 @@ ALGO_compute_input = ComputeInput(ALGO_asset, algo_service)
 In the Python console:
 
 ```python
-usdc_token.approve(asset_erc20_enterprise_token.address, ocean.to_wei(100), consumer_A_wallet)
+USDC_token = DatatokenBase(config, Web3.toChecksumAddress("0x07865c6E87B9F70255377e024ace6630C1Eaa37F"))
+asset_erc20_enterprise_token = Datatoken2(config, Web3.toChecksumAddress(data_token_address))
+algo_erc20_enterprise_token = Datatoken2(config, Web3.toChecksumAddress(algo_token_address))
+consumer_private_key = os.getenv('TEST_PRIVATE_KEY1')
+consumer_A_wallet = accounts.add(consumer_private_key)
+print(f"================")
+print(f"consumer_A_wallet.address = '{consumer_A_wallet.address}'")
 
-asset_erc20_enterprise_token.approve(asset_erc20_enterprise_token.address, ocean.to_wei(100), consumer_A_wallet)
+nft_factory = ocean.data_nft_factory
+DATA_asset = ocean.assets.resolve(DATA_did)
+ALGO_asset = ocean.assets.resolve(ALG_did)
+# Operate on updated and indexed assets
+compute_service = DATA_asset.services[0]
+algo_service = ALGO_asset.services[0]
+environments = ocean.compute.get_c2d_environments(data_token_ProviderUri)
+from datetime import datetime, timedelta
+from ocean_lib.models.compute_input import ComputeInput
+DATA_compute_input = ComputeInput(DATA_asset, compute_service)
+ALGO_compute_input = ComputeInput(ALGO_asset, algo_service)
+
+# Approve tokens for consumer_A
+USDC_token.approve(asset_erc20_enterprise_token.address,  Web3.toWei(1000, "ether"), {"from": consumer_A_wallet})
+asset_erc20_enterprise_token.approve(asset_erc20_enterprise_token.address,  Web3.toWei(1000, "ether"), {"from": consumer_A_wallet})
+algo_erc20_enterprise_token.approve(algo_erc20_enterprise_token.address, Web3.toWei(1000,  "ether"), {"from": consumer_A_wallet})
 ```
 
 <br />
@@ -141,8 +151,8 @@ Get provider fees info for algorithm and compute asset
 fees_response = ocean.retrieve_provider_fees_for_compute(
             datasets=[DATA_compute_input],
             algorithm_data=ALGO_compute_input,
-            consumer_address=environments[0]["consumerAddress"],
-            compute_environment=environments[0]["id"],
+            consumer_address=environments[1]["consumerAddress"],
+            compute_environment=environments[1]["id"],
             valid_until=int((datetime.utcnow() + timedelta(days=1)).timestamp()),
 )
 ```
@@ -153,41 +163,39 @@ In the same python console (Fixed Pricing Asset):
 
 ```python
 # get asset exchange id
-asset_exchange_addresses_and_ids = ocean.get_nft_factory().search_exchange_by_datatoken(ocean.fixed_rate_exchange, asset_erc20_enterprise_token.address, exchange_owner=data_token_owner_address)
+asset_exchange_addresses_and_ids = nft_factory.search_exchange_by_datatoken(
+    fixed_rate_exchange=ocean.fixed_rate_exchange,
+    datatoken=data_token_address,
+    exchange_owner=data_token_owner_address
+)
 assert (
     asset_exchange_addresses_and_ids
 ), f"No exchanges found. datatoken_address = {data_token_address}, exchange_owner = {data_token_owner_address}."
 print(asset_exchange_addresses_and_ids)
 
-asset_exchange_address = asset_exchange_addresses_and_ids[0][0]
-asset_exchange_id = asset_exchange_addresses_and_ids[0][1]
-
 provider_fees = fees_response["datasets"][0]["providerFee"]
 
-tx = asset_erc20_enterprise_token.buy_from_fre_and_order(
-        consumer=environments[0]["consumerAddress"],
+asset_exchange_id = asset_exchange_addresses_and_ids[0][1]
+from ocean_lib.models.fixed_rate_exchange import FixedRateExchange, OneExchange
+fre_exchange = FixedRateExchange(config, ocean.fixed_rate_exchange.contract.address)
+one_exchange = OneExchange(fre_exchange, asset_exchange_id)
+consume_market_fees=TokenFeeInfo(
+            address=consumer_A_wallet.address,
+            token="0x07865c6E87B9F70255377e024ace6630C1Eaa37F",
+            amount=0,
+)
+tx = asset_erc20_enterprise_token.buy_DT_and_order(
+        provider_fees=provider_fees,
+        exchange=one_exchange,
+        tx_dict={"from": consumer_A_wallet},
         service_index=0,
-        provider_fee_address= provider_fees["providerFeeAddress"],
-        provider_fee_token=provider_fees["providerFeeToken"],
-        provider_fee_amount=int(provider_fees["providerFeeAmount"]),
-        v=provider_fees["v"],
-        r=provider_fees["r"],
-        s=provider_fees["s"],
-        valid_until=provider_fees["validUntil"],
-        provider_data=provider_fees["providerData"],
-        consume_market_order_fee_address=consumer_A_wallet.address,
-        consume_market_order_fee_token=asset_erc20_enterprise_token.address,
-        consume_market_order_fee_amount=0,
-        exchange_contract=ocean.fixed_rate_exchange.address,
-        exchange_id=asset_exchange_id,
-        max_base_token_amount=to_wei(10),
-        consume_market_swap_fee_amount=to_wei("0.001"),  # 1e15 => 0.1%
-        consume_market_swap_fee_address=consumer_A_wallet.address,
-        from_wallet=consumer_A_wallet,
+        consume_market_fees=consume_market_fees,
+        max_base_token_amount= Web3.toWei(10, "ether"),
+        consume_market_swap_fee_amount=Web3.toWei(0.001, "ether"),   # 1e15 => 0.1%
+        consume_market_swap_fee_address=consumer_A_wallet.address
     )
-
 # set transaction id
-DATA_compute_input.transfer_tx_id = tx
+DATA_compute_input.transfer_tx_id = tx.txid
 ```
 
 <br />
@@ -199,25 +207,20 @@ In the same python console (Free Pricing Asset):
 ```python
 provider_fees = fees_response["datasets"][0]["providerFee"]
 
-tx = asset_erc20_enterprise_token.buy_from_dispenser_and_order(
-        consumer=environments[0]["consumerAddress"],
-        service_index=0,
-        provider_fee_address=provider_fees["providerFeeAddress"],
-        provider_fee_token=provider_fees["providerFeeToken"],
-        provider_fee_amount=int(provider_fees["providerFeeAmount"]),
-        v=provider_fees["v"],
-        r=provider_fees["r"],
-        s=provider_fees["s"],
-        valid_until=provider_fees["validUntil"],
-        provider_data=provider_fees["providerData"],
-        consume_market_order_fee_address=consumer_A_wallet.address,
-        consume_market_order_fee_token=asset_erc20_enterprise_token.address,
-        consume_market_order_fee_amount=0,
-        dispenser_address=ocean.dispenser.address,
-        from_wallet=consumer_A_wallet,
-    )
+consume_market_fees=TokenFeeInfo(
+            address=consumer_A_wallet.address,
+            token="0x07865c6E87B9F70255377e024ace6630C1Eaa37F",
+            amount=0,
+)
+tx = asset_erc20_enterprise_token.dispense_and_order(
+    consumer=environments[0]["consumerAddress"],
+    provider_fees=provider_fees,
+    tx_dict={"from": consumer_A_wallet},
+    consume_market_fees=consume_market_fees,
+    service_index=0,
+)
 # set transaction id
-DATA_compute_input.transfer_tx_id = tx
+DATA_compute_input.transfer_tx_id = tx.txid
 ```
 
 <br />
@@ -227,9 +230,7 @@ DATA_compute_input.transfer_tx_id = tx
 In the Python console:
 
 ```python
-usdc_token.approve(algo_erc20_enterprise_token.address, ocean.to_wei(100), consumer_A_wallet)
-
-algo_erc20_enterprise_token.approve(algo_erc20_enterprise_token.address, ocean.to_wei(100), consumer_A_wallet)
+algo_erc20_enterprise_token.approve(algo_erc20_enterprise_token.address, Web3.toWei(1000,  "ether"), {"from": consumer_A_wallet})
 ```
 
 <br />
@@ -242,42 +243,33 @@ In the same python console (Fixed Pricing Asset):
 
 ```python
 # get asset exchange id
-algo_exchange_addresses_and_ids = ocean.get_nft_factory().search_exchange_by_datatoken(ocean.fixed_rate_exchange, algo_erc20_enterprise_token.address, exchange_owner=algo_token_owner_address)
+algo_erc20_enterprise_token.approve(algo_erc20_enterprise_token.address, Web3.toWei(1000,  "ether"), {"from": consumer_A_wallet})
+algo_exchange_addresses_and_ids = nft_factory.search_exchange_by_datatoken(
+    fixed_rate_exchange=ocean.fixed_rate_exchange,
+    datatoken=algo_token_address,
+    exchange_owner=algo_token_owner_address
+)
 assert (
     algo_exchange_addresses_and_ids
-), f"No exchanges found. datatoken_address = {algo_erc20_enterprise_token.address}, exchange_owner = {algo_token_owner_address}."
+), f"No exchanges found. datatoken_address = {algo_token_address}, exchange_owner = {algo_token_owner_address}."
 print(algo_exchange_addresses_and_ids)
-
-algo_exchange_address = algo_exchange_addresses_and_ids[0][0]
 algo_exchange_id = algo_exchange_addresses_and_ids[0][1]
 
 algo_provider_fees = fees_response["algorithm"]["providerFee"]
 
-tx_algo = algo_erc20_enterprise_token.buy_from_fre_and_order(
-        consumer=environments[0]["consumerAddress"],
+algo_one_exchange = OneExchange(fre_exchange, algo_exchange_id)
+tx_algo = algo_erc20_enterprise_token.buy_DT_and_order(
+        provider_fees=algo_provider_fees,
+        exchange=algo_one_exchange,
+        tx_dict={"from": consumer_A_wallet},
         service_index=0,
-        provider_fee_address= algo_provider_fees["providerFeeAddress"],
-        provider_fee_token=algo_provider_fees["providerFeeToken"],
-        provider_fee_amount=int(algo_provider_fees["providerFeeAmount"]),
-        v=algo_provider_fees["v"],
-        r=algo_provider_fees["r"],
-        s=algo_provider_fees["s"],
-        valid_until=algo_provider_fees["validUntil"],
-        provider_data=algo_provider_fees["providerData"],
-        consume_market_order_fee_address=consumer_A_wallet.address,
-        consume_market_order_fee_token=algo_erc20_enterprise_token.address,
-        consume_market_order_fee_amount=0,
-        exchange_contract=ocean.fixed_rate_exchange.address,
-
-        exchange_id=algo_exchange_id,
-        max_base_token_amount=to_wei(10),
-        consume_market_swap_fee_amount=to_wei("0.001"),  # 1e15 => 0.1%
-        consume_market_swap_fee_address=consumer_A_wallet.address,
-        from_wallet=consumer_A_wallet,
-    )
-
+        consume_market_fees=consume_market_fees,
+        max_base_token_amount= Web3.toWei(10, "ether"),
+        consume_market_swap_fee_amount=Web3.toWei(0.001, "ether"),   # 1e15 => 0.1%
+        consume_market_swap_fee_address=consumer_A_wallet.address
+)
 # set transaction id
-ALGO_compute_input.transfer_tx_id = tx_algo
+ALGO_compute_input.transfer_tx_id = tx_algo.txid
 ```
 
 <br />
@@ -288,27 +280,15 @@ In the same python console (Free Pricing Asset):
 
 ```python
 algo_provider_fees = fees_response["algorithm"]["providerFee"]
-
-tx_algo = algo_erc20_enterprise_token.buy_from_dispenser_and_order(
-        consumer=environments[0]["consumerAddress"],
-        service_index=0,
-        provider_fee_address= algo_provider_fees["providerFeeAddress"],
-        provider_fee_token=algo_provider_fees["providerFeeToken"],
-        provider_fee_amount=int(algo_provider_fees["providerFeeAmount"]),
-        v=algo_provider_fees["v"],
-        r=algo_provider_fees["r"],
-        s=algo_provider_fees["s"],
-        valid_until=algo_provider_fees["validUntil"],
-        provider_data=algo_provider_fees["providerData"],
-        consume_market_order_fee_address=consumer_A_wallet.address,
-        consume_market_order_fee_token=algo_erc20_enterprise_token.address,
-        consume_market_order_fee_amount=0,
-        dispenser_address=ocean.dispenser.address,
-        from_wallet=consumer_A_wallet,
-    )
-
+tx_algo = algo_erc20_enterprise_token.dispense_and_order(
+    consumer=environments[0]["consumerAddress"],
+    provider_fees=algo_provider_fees,
+    tx_dict={"from": consumer_A_wallet},
+    consume_market_fees=consume_market_fees,
+    service_index=0,
+)
 # set transaction id
-ALGO_compute_input.transfer_tx_id = tx_algo
+ALGO_compute_input.transfer_tx_id = tx_algo.txid
 ```
 
 <br />
@@ -327,7 +307,7 @@ In the same python console:
 job_id = ocean.compute.start(
     consumer_wallet=consumer_A_wallet,
     dataset=DATA_compute_input,
-    compute_environment=environments[0]["id"],
+    compute_environment=environments[1]["id"],
     algorithm=ALGO_compute_input
 )
 print(f"Started compute job with id: {job_id}")
