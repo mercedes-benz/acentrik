@@ -1,26 +1,20 @@
 # Quickstart: Consume Compute-to-Data Flow
 
-This describes the flow when running a Compute-to-Data job, focusing on ConsumerA's experience as a Data Consumer on Acentrik Data Marketplace
-
-<br />
-
-## Disclaimer
-
-The Current Compute-to-Date Job are still on work in progress.
+This describes the flow when running a Compute-to-Data job, focusing on Consumer's experience as a Data Consumer on Acentrik Data Marketplace
 
 <br />
 
 Here are the steps:
 
 1.  Setup
-2.  ConsumerA Approve Data Token
-3.  ConsumerA buys datatoken (Fixed-rate) / request datatoken from dispenser (Free)
-4.  ConsumerA Approve Algorithm Token
-5.  ConsumerA buys Algorithm token (Fixed-rate) / request Algorithm token from dispenser (Free)
-6.  ConsumerA starts a compute job
-7.  ConsumerA monitors logs / output file
+2.  Approve Data Token
+3.  Buys datatoken (Fixed-rate) / request datatoken from dispenser (Free)
+4.  Approve Algorithm Token
+5.  Buys Algorithm token (Fixed-rate) / request Algorithm token from dispenser (Free)
+6.  Starts a compute job
+7.  Monitors logs / output file
 
-Let's go through each step.
+Let's go through each step. <b> There's two possible scenario for purchasing data token & Algorithm token, Fixed Rate and Free </b>
 
 <br />
 
@@ -141,6 +135,8 @@ network.gas_price("auto")
 
 ## 2. ConsumerA Approve Data Token
 
+### Scenario A - Fixed-rate aka Premium
+
 In the Python console:
 
 ```python
@@ -170,6 +166,35 @@ asset_erc20_enterprise_token.approve(asset_erc20_enterprise_token.address,  Web3
 algo_erc20_enterprise_token.approve(algo_erc20_enterprise_token.address, Web3.toWei(1000,  "ether"), {"from": consumer_A_wallet})
 ```
 
+### Scenario B - Free
+
+In the Python console:
+
+```python
+asset_erc20_enterprise_token = Datatoken2(config, Web3.toChecksumAddress(data_token_address))
+algo_erc20_enterprise_token = Datatoken2(config, Web3.toChecksumAddress(algo_token_address))
+consumer_private_key = os.getenv('TEST_PRIVATE_KEY1')
+consumer_A_wallet = accounts.add(consumer_private_key)
+print(f"================")
+print(f"consumer_A_wallet.address = '{consumer_A_wallet.address}'")
+
+nft_factory = ocean.data_nft_factory
+DATA_asset = ocean.assets.resolve(DATA_did)
+ALGO_asset = ocean.assets.resolve(ALG_did)
+# Operate on updated and indexed assets
+compute_service = DATA_asset.services[0]
+algo_service = ALGO_asset.services[0]
+environments = ocean.compute.get_c2d_environments(data_token_ProviderUri)
+from datetime import datetime, timedelta
+from ocean_lib.models.compute_input import ComputeInput
+DATA_compute_input = ComputeInput(DATA_asset, compute_service)
+ALGO_compute_input = ComputeInput(ALGO_asset, algo_service)
+
+# Approve tokens for consumer_A
+asset_erc20_enterprise_token.approve(asset_erc20_enterprise_token.address,  Web3.toWei(1000, "ether"), {"from": consumer_A_wallet})
+algo_erc20_enterprise_token.approve(algo_erc20_enterprise_token.address, Web3.toWei(1000,  "ether"), {"from": consumer_A_wallet})
+```
+
 <br />
 
 ## 3. ConsumerA buys datatoken (Fixed-rate) / request datatoken from dispenser (Free)
@@ -186,7 +211,7 @@ fees_response = ocean.retrieve_provider_fees_for_compute(
 )
 ```
 
-### If the Asset is Fixed Price
+### Scenario A - Fixed-rate aka Premium
 
 In the same python console (Fixed Pricing Asset):
 
@@ -229,7 +254,7 @@ DATA_compute_input.transfer_tx_id = tx.txid
 
 <br />
 
-### If the Asset is Free Price
+### Scenario B - Free
 
 In the same python console (Free Pricing Asset):
 
@@ -266,7 +291,7 @@ algo_erc20_enterprise_token.approve(algo_erc20_enterprise_token.address, Web3.to
 
 ## 5. ConsumerA buys Algorithm token (Fixed-rate) / request Algorithm token from dispenser (Free)
 
-### If the Asset is Fixed Price
+### Scenario A - Fixed-rate aka Premium
 
 In the same python console (Fixed Pricing Asset):
 
@@ -303,7 +328,7 @@ ALGO_compute_input.transfer_tx_id = tx_algo.txid
 
 <br />
 
-### If the Asset is Free Price
+### Scenario B - Free
 
 In the same python console (Free Pricing Asset):
 
