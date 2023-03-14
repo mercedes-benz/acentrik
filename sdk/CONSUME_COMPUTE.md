@@ -30,6 +30,9 @@ Let's go through each step.
 
 - ConsumerA's Wallets have Consumer roles
 - Asset Information Json file
+- Set config parameter
+
+### Asset Information Json file
 
 Create an asset_info.json file and filled up the asset details
 
@@ -55,9 +58,33 @@ Create an asset_info.json file and filled up the asset details
 
 <br />
 
-![Copy info clipboard](./copy_info_clipboard.gif)
+![Copy info clipboard](./copy_info_clipboard_compute.gif)
 
-<em>Head to specific Asset detail page, copy the asset details from Acentrik Developer Details section</em>
+<em>Head to specific Asset detail page, select the compatible algorithm, copy the asset details from Acentrik Developer Details section</em>
+
+<br />
+
+### Set config parameter
+
+An Ocean instance will hold a config_dict that holds various config parameters. These parameters need to get set. This is set based on what's input to Ocean constructor:
+
+1.  dict input: `Ocean({'METADATA_CACHE_URI':..})`
+2.  use boilerplate from example config
+
+#### Example
+
+Here is an example for (1): dict input, filled from envvars
+
+```python
+from ocean_lib.example_config import get_config_dict
+from ocean_lib.ocean.ocean import Ocean
+config = get_config_dict("goerli")
+
+config['METADATA_CACHE_URI'] = aquarius_uri
+config['PROVIDER_URL'] = asset_provider_uri
+
+ocean = Ocean(config)
+```
 
 <br />
 
@@ -66,6 +93,7 @@ In the Python console:
 ```python
 from web3.main import Web3
 import json
+
 # Read asset_info.json file
 asset_info = open('asset_info.json')
 data_asset_info = json.load(asset_info)
@@ -90,6 +118,7 @@ from ocean_lib.example_config import get_config_dict
 from ocean_lib.ocean.ocean import Ocean
 config = get_config_dict("goerli")
 
+# Set config parameter
 config['METADATA_CACHE_URI'] = aquarius_uri
 config['PROVIDER_URL'] = data_token_ProviderUri
 

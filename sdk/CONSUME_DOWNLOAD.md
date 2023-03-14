@@ -1,24 +1,27 @@
 # Quickstart: Consume downloadable asset Flow
 
-This describes the flow when consuming a downloadable asset, focusing on ConsumerA's experience as a Data Consumer on Acentrik Data Marketplace:
+The followings explain the flow of consuming a downloadable asset from Acentrik Data Marketplace with the use of SDK and Python for execution.
 
-Here are the steps:
+Here are the steps that SDK will be executed to complete the consumption of assets:-
 
 1.  Setup
-2.  ConsumerA Approve Data Token
-3.  ConsumerA buys datatoken (Fixed-rate) / request datatoken from dispenser (Free)
-4.  ConsumerA downloads asset
+2.  Approve Data Token
+3.  Purchase Datatoken (Fixed-rate aka Premium) OR Request Datatoken from dispenser (Free)
+4.  Downloads asset to local machine
 
 <br />
 
-Let's go through each step.
+Let's go through each step. <b> There's two possible scenario, Fixed Rate and Free </b>
 
 ## 1. Setup
 
 ### Prerequisites
 
-- ConsumerA's Wallets have Consumer roles
+- Wallets have Consumer roles
 - Asset Information Json file
+- Set config parameter
+
+### Asset Information Json file
 
 Create an asset_info.json file and filled up the asset details
 
@@ -38,9 +41,33 @@ Create an asset_info.json file and filled up the asset details
 
 <br />
 
-![Copy info clipboard](./copy_info_clipboard.gif)
+![Copy info clipboard](./copy_info_clipboard_download.gif)
 
 <em>Head to specific Asset detail page, copy the asset details from Acentrik Developer Details section</em>
+
+<br />
+
+### Set config parameter
+
+An Ocean instance will hold a config_dict that holds various config parameters. These parameters need to get set. This is set based on what's input to Ocean constructor:
+
+1.  dict input: `Ocean({'METADATA_CACHE_URI':..})`
+2.  use boilerplate from example config
+
+#### Example
+
+Here is an example for (1): dict input, filled from envvars
+
+```python
+from ocean_lib.example_config import get_config_dict
+from ocean_lib.ocean.ocean import Ocean
+config = get_config_dict("goerli")
+
+config['METADATA_CACHE_URI'] = aquarius_uri
+config['PROVIDER_URL'] = asset_provider_uri
+
+ocean = Ocean(config)
+```
 
 <br />
 
@@ -70,6 +97,7 @@ from ocean_lib.example_config import get_config_dict
 from ocean_lib.ocean.ocean import Ocean
 config = get_config_dict("goerli")
 
+# Set config parameter
 config['METADATA_CACHE_URI'] = aquarius_uri
 config['PROVIDER_URL'] = asset_provider_uri
 
@@ -90,7 +118,9 @@ network.gas_price("auto")
 
 <br />
 
-## 2. Approve tokens for consumer_A
+## 2. Approve Data Token
+
+### Scenario A - Fixed-rate aka Premium
 
 In the same python console (Fixed Pricing Asset):
 
@@ -116,15 +146,36 @@ exchange_address = exchange_addresses_and_ids[0][0]
 exchange_id = exchange_addresses_and_ids[0][1]
 fixed_price_address = ocean.fixed_rate_exchange
 
-
 # Approve tokens for consumer_A
 USDC_token.approve(token_address,  Web3.toWei(1000, "ether"), {"from": consumer_A_wallet})
 erc20_enterprise_token.approve(token_address,  Web3.toWei(1000, "ether"), {"from": consumer_A_wallet})
 ```
 
+### Scenario B - Free
+
+In the same python console (Free Pricing Asset):
+
+```python
+erc20_enterprise_token = Datatoken2(config, Web3.toChecksumAddress(token_address))
+accounts.clear()
+consumer_private_key = os.getenv('TEST_PRIVATE_KEY1')
+consumer_A_wallet = accounts.add(consumer_private_key)
+print(f"================")
+print(f"bob_wallet.address = '{consumer_A_wallet.address}'")
+
+# Get a list exchange addresses and ids with a given datatoken and exchange owner.
+datatoken_address = token_address
+nft_factory = ocean.data_nft_factory
+print(erc20_enterprise_token.dispenser_status()) # check if its dispenser
+
+erc20_enterprise_token.approve(token_address,  Web3.toWei(1000, "ether"), {"from": consumer_A_wallet})
+```
+
 <br />
 
-## 3. ConsumerA buys datatoken (Fixed-rate) / request datatoken from dispenser (Free)
+## 3. Purchase Datatoken (Fixed-rate aka Premium) OR Request Datatoken from dispenser (Free)
+
+### Scenario A - Fixed-rate aka Premium
 
 In the same python console (Fixed Pricing Asset):
 
@@ -157,7 +208,7 @@ tx = erc20_enterprise_token.buy_DT_and_order(
 
 <br />
 
-### If the Asset is Free Price
+### Scenario B - Free
 
 In the same python console (Free Pricing Asset):
 
@@ -181,7 +232,7 @@ tx = erc20_enterprise_token.dispense_and_order(
 
 <br />
 
-## 4. ConsumerA downloads asset
+## 4. Downloads asset to local machine
 
 ### ⚠️ Disclaimer
 

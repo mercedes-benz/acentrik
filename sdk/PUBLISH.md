@@ -9,6 +9,8 @@ Here are the steps:
 3.  PublisherA specify metadata and service attributes (Compute / Download)
 4.  PublisherA publish metadata and service attributes on-chain
 
+<br />
+
 Let's go through each step.
 
 <br />
@@ -19,8 +21,35 @@ Let's go through each step.
 
 - PublisherA's Wallets have Publisher Roles
 - Base Token address (Eg: USDC on goerli network are "0x07865c6E87B9F70255377e024ace6630C1Eaa37F")
-- Clone words.json file from [OceanJs Repository](https://github.com/oceanprotocol/ocean.js/blob/v4main/src/data/words.json)
+- Clone words.json file from [OceanJs Repository](https://raw.githubusercontent.com/oceanprotocol/ocean.js/v2.7.0-next.2/src/utils/data/words.json)
 - Aquarius and Provider Uri
+- Set config parameter
+
+<br />
+
+### Set config parameter
+
+An Ocean instance will hold a config_dict that holds various config parameters. These parameters need to get set. This is set based on what's input to Ocean constructor:
+
+1.  dict input: `Ocean({'METADATA_CACHE_URI':..})`
+2.  use boilerplate from example config
+
+#### Example
+
+Here is an example for (1): dict input, filled from envvars
+
+```python
+from ocean_lib.example_config import get_config_dict
+from ocean_lib.ocean.ocean import Ocean
+config = get_config_dict("goerli")
+
+config['METADATA_CACHE_URI'] = aquarius_uri
+config['PROVIDER_URL'] = asset_provider_uri
+
+ocean = Ocean(config)
+```
+
+<br />
 
 In the Python console:
 
@@ -55,6 +84,7 @@ from ocean_lib.example_config import get_config_dict
 from ocean_lib.ocean.ocean import Ocean
 config = get_config_dict("goerli")
 
+# Set config parameter
 config['METADATA_CACHE_URI'] = "https://v1.aquarius.dev.acentrik.io"  # Aquarius URI
 config['PROVIDER_URL'] = "https://v1.provider.goerli.dev.acentrik.io"  # Provider URI
 
