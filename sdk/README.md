@@ -1,10 +1,10 @@
 # SDK (Ocean.py)
 
-Use of Python Library to publish/consume data on Acentrik privately and securely.
+Acentrik Data Marketplace provides a friendly user interface to enable enterprises to publish and/or consume data on top of web 3.0 technology, however, enterprises can opt to make use of Python Library together with SDK tools to publish and/or consume data privately and securely via Acentrik Data Marketplace connected services.
 
-With ocean.py, you can:
+With the use of Ocean Python (ocean.py), enterprise can:-
 
-- **Publish** data services: downloadable files or run compute-to-data jobs, datatoken for each dataset / data service.
+- **Publish** data services: downloadable files OR to run a compute-to-data (C2D) jobs, datatoken for each dataset or data service
 - **Mint** datatokens for the service
 - **Sell** datatokens for a premium price
 - **Consume** datatokens, to access the service
@@ -13,7 +13,7 @@ With ocean.py, you can:
 
 ### Prerequisites
 
-- Python 3.8.5 - Python 3.10.4, Python 3.11 with some manual alterations
+- Python 3.8.5 - Python 3.10.4, Python 3.11 with some manual alterations (Recommend Python 3.9.2)
 - pip install wheel
 - pip install --pre ocean-lib
 
