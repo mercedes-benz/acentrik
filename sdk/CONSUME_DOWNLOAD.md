@@ -40,7 +40,7 @@ Create an asset_info.json file and filled up the asset details
 
 ![Copy info clipboard](./copy_info_clipboard.gif)
 
-<em>Copy the asset details from Acentrik developer details section</em>
+<em>Head to specific Asset detail page, copy the asset details from Acentrik Developer Details section</em>
 
 <br />
 
