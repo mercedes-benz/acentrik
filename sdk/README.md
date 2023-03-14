@@ -13,7 +13,7 @@ With ocean.py, you can:
 
 ### Prerequisites
 
-- Python 3.8.5+
+- Python 3.8.5 - Python 3.10.4, Python 3.11 with some manual alterations
 - pip install wheel
 - pip install --pre ocean-lib
 
