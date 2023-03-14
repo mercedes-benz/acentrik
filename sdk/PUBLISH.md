@@ -5,13 +5,13 @@ This describes the flow when publishing a Data Asset, focusing on ProviderrA's e
 Here are the steps:
 
 1.  Setup
-2.  PublisherA generate & publish a datatoken (Fixed / Free Pricing)
-3.  PublisherA specify metadata and service attributes (Compute / Download)
-4.  PublisherA publish metadata and service attributes on-chain
+2.  Generate & publish a datatoken (Fixed / Free Pricing)
+3.  Specify metadata and service attributes (Compute / Download)
+4.  Publish metadata and service attributes on-chain
 
 <br />
 
-Let's go through each step.
+Let's go through each step. <b> There's two possible scenario (Compute / Download), And for each scenario, user can decided pricing of the asset (Fixed Rate / Free). </b>
 
 <br />
 
@@ -102,9 +102,9 @@ network.gas_price("auto")
 
 <br />
 
-## 2. PublisherA generate & publish a datatoken (Fixed / Free Pricing)
+## 2. Generate & publish a datatoken (Fixed / Free Pricing)
 
-### If the Asset is Fixed Price
+### Scenario A - Fixed-rate aka Premium
 
 In the same python console:
 
@@ -175,7 +175,7 @@ from ocean_lib.models.datatoken2 import Datatoken2
 datatoken: Datatoken2 = tx[1]
 ```
 
-### If the Asset is Free Price
+### Scenario B - Free
 
 ```python
 # Free rate
@@ -218,7 +218,7 @@ tx = ocean.data_nft_factory.create_with_erc20_and_dispenser(
 
 <br />
 
-## 3. PublisherA specify metadata and service attributes (Compute / Download)
+## 3. Specify metadata and service attributes (Compute / Download)
 
 ### If the Asset is Dataset (Download) Type
 
@@ -242,9 +242,7 @@ metadata = {
     "categories": [
       "Aerospace"
     ],
-    "tags": [
-      ""
-    ],
+    "tags": [],
 }
 from ocean_lib.structures.file_objects import UrlFile
 from ocean_lib.services.service import Service
@@ -313,9 +311,7 @@ metadata = {
     "categories": [
       "Aerospace"
     ],
-    "tags": [
-      ""
-    ],
+    "tags": [],
 }
 
 # ocean.py offers multiple file types, but a simple url file should be enough for this example
@@ -376,9 +372,7 @@ metadata = {
     "categories": [
       "Aerospace"
     ],
-    "tags": [
-      ""
-    ],
+    "tags": [],
 }
 
 # ocean.py offers multiple file types, but a simple url file should be enough for this example
@@ -430,7 +424,7 @@ service = Service(
 
 <br />
 
-## 4. PublisherA publish metadata and service attributes on-chain.
+## 4. Publish metadata and service attributes on-chain
 
 In the same python console:
 
