@@ -1,6 +1,6 @@
 # Quickstart: Publish Flow
 
-This describes the flow when publishing a Data Asset, focusing on ProviderrA's experience as a Data Provider on Acentrik Data Marketplace
+This describes the flow when publishing a Data Asset, focusing on Publisher's experience as a Data Provider on Acentrik Data Marketplace
 
 Here are the steps:
 
