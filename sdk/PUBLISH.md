@@ -226,7 +226,8 @@ In the same python console:
 
 ```python
 # specify metadata and service attributes
-date_created = datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
+from datetime import datetime, timezone
+date_created = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
 metadata = {
     "created": date_created,
     "updated": date_created,
@@ -255,6 +256,7 @@ url_file = UrlFile(
 service_id = hashlib.sha256((datatoken.address).encode()).hexdigest()
 
 service = Service(
+    name="SDK Testing",
     service_id=service_id,
     service_type=ServiceTypes.ASSET_ACCESS,
     service_endpoint=config['PROVIDER_URL'],
@@ -284,8 +286,8 @@ service = Service(
 Metadata & Service attributes if the asset are Algorithm
 
 ```python
-date_created = datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
-
+from datetime import datetime, timezone
+date_created = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
 metadata = {
     "created": date_created,
     "updated": date_created,
@@ -326,6 +328,7 @@ url_file = UrlFile(
 service_id = hashlib.sha256((datatoken.address).encode()).hexdigest()
 
 service = Service(
+    name="SDK Testing",
     service_id=service_id,
     service_type=ServiceTypes.ASSET_ACCESS,
     service_endpoint=config['PROVIDER_URL'],
@@ -356,7 +359,9 @@ service = Service(
 Metadata & Service attributes if the asset are Compute
 
 ```python
-date_created = datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
+from datetime import datetime, timezone
+date_created = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+
 metadata = {
     "created": date_created,
     "updated": date_created,
@@ -396,6 +401,7 @@ compute_value =  {
 service_id = hashlib.sha256((datatoken.address).encode()).hexdigest()
 
 service = Service(
+    name="SDK Testing",
     service_id=service_id,
     service_type=ServiceTypes.CLOUD_COMPUTE,
     service_endpoint=config['PROVIDER_URL'],
