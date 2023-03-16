@@ -1,4 +1,4 @@
-# Edge Node Guidelines and Setup Instructions
+# Edge Node Cluster Guidelines and Setup Instructions
 
 - [Overview](#overview)
 - [Prerequisites](#prerequisites)
