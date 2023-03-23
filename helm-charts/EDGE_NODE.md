@@ -69,7 +69,7 @@ Optionally you can pull and mirror all the required images to your own private r
 | config.networkUrl           | Network name: polygon                                                                                                   |
 | config.redisConnection\*\*  | Connection URL to Redis. Defaults to None (no Redis connection, SQLite database embedded with provider is used instead) |
 | config.ipfsGateway          | Your IPFS Gateway if any                                                                                                |
-| config.operatorServiceUrl   | Your custom operator service endpoint URL                                                                               |
+| config.operatorServiceUrl   | Your custom operator service endpoint URL (Leave the value empty if no need to run compute job)                         |
 | config.aquariusUrl\*\*\*    | Predefined Aquarius URL of multi-chain network                                                                          |
 | config.rbacUrl\*\*\*\*      | URL to the RBAC permissions server. Defaults to Acentrik RBAC Server                                                    |
 | config.log.level            | Logging level                                                                                                           |

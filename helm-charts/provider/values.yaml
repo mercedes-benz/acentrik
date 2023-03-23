@@ -20,7 +20,7 @@ secret:
   infuraProjectId: <INFURA_PROJECT_ID>
   providerPrivateKey: changeme
   networkUrl: <RPC_URL>
-  redisConnection: rediss://:PASSWORD@HOST:PORT
+  redisConnection: rediss://:PASSWORD@HOST:PORT ## Leave the value empty to disable redis connection
 
 ## ConfigMap relevant values
 config:
@@ -31,7 +31,7 @@ config:
   aquariusUrl: https://v1.aquarius.acentrik.io
   rbacUrl: https://v1.rbac.acentrik.io
   requestRetries: "3"
-  authorizedDecrypters: '["0x97fE0fC2a067b6A6d75D194CE2E6413f059a5E43"]' ## Aquarius wallet address
+  authorizedDecrypters: '["0x97fE0fC2a067b6A6d75D194CE2E6413f059a5E43"]' ## Aquarius (config.aquariusUrl) wallet address
   log:
     ## CRITICAL	50, ERROR	40, WARNING	30, INFO 20, DEBUG 10, NOTSET	0
     level: INFO
