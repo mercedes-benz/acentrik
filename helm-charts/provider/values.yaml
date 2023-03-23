@@ -28,15 +28,19 @@ config:
   oceanProviderWorkers: "10"
   oceanProviderTimeout: "9000"
   operatorServiceUrl: http://operator-api.ocean-operator.svc.cluster.local:8050
-  aquariusUrl: https://v1.aquarius.acentrik.io
-  rbacUrl: https://v1.rbac.acentrik.io
+  aquariusUrl: https://v1.aquarius.acentrik.io ## Please request the value from Acentrik team, value will dependent on which Acentrik Enviroment the Provider connecting to
+  rbacUrl: https://v1.rbac.acentrik.io ## Please request the value from Acentrik team, value will dependent on which Acentrik Enviroment the Provider connecting to
   requestRetries: "3"
-  authorizedDecrypters: '["0x97fE0fC2a067b6A6d75D194CE2E6413f059a5E43"]' ## Aquarius (config.aquariusUrl) wallet address
+  ## authorizedDecrypters - Aquarius (config.aquariusUrl) wallet address
+  ## Please request the value from Acentrik team, value will dependent on which Acentrik Enviroment the Provider connecting to
+  authorizedDecrypters: '["0x97fE0fC2a067b6A6d75D194CE2E6413f059a5E43"]'
   log:
     ## CRITICAL	50, ERROR	40, WARNING	30, INFO 20, DEBUG 10, NOTSET	0
     level: INFO
   allowNonPublicIp: "0"
-  providerFeeToken: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174" ## baseToken for provider fee (0x2791 is USDC in polygon network)
+  ## providerFeeToken - baseToken for provider fee (0x2791 is USDC in polygon network).
+  ## Please request the value from Acentrik team, value will dependent on which network the Provider connecting to
+  providerFeeToken: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
 
 podAutoScaler:
   enabled: true
