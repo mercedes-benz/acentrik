@@ -62,18 +62,20 @@ Optionally you can pull and mirror all the required images to your own private r
 
 ### [Customize your Provider deployment](./provider)
 
-| Variable                    | Description                                                                                                             |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| secret.infuraProjectId      | Ethereum RPC Project ID                                                                                                 |
-| secret.providerPrivateKey\* | Private key of your provider wallet account, which used to encrypt the data asset endpoint                              |
-| config.networkUrl           | Network name: polygon                                                                                                   |
-| config.redisConnection\*\*  | Connection URL to Redis. Defaults to None (no Redis connection, SQLite database embedded with provider is used instead) |
-| config.ipfsGateway          | Your IPFS Gateway if any                                                                                                |
-| config.operatorServiceUrl   | Your custom operator service endpoint URL (Leave the value empty if no need to run compute job)                         |
-| config.aquariusUrl\*\*\*    | Predefined Aquarius URL of multi-chain network                                                                          |
-| config.rbacUrl\*\*\*\*      | URL to the RBAC permissions server. Defaults to Acentrik RBAC Server                                                    |
-| config.log.level            | Logging level                                                                                                           |
-| config.allowNonPublicIp     | Allow Non Public IP to access from Provider                                                                             |
+| Variable                          | Description                                                                                                                                                     |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| secret.infuraProjectId            | Ethereum RPC Project ID                                                                                                                                         |
+| secret.providerPrivateKey\*       | Private key of your provider wallet account, which used to encrypt the data asset endpoint                                                                      |
+| secret.networkUrl                 | Network name: polygon                                                                                                                                           |
+| secret.redisConnection\*\*        | Connection URL to Redis. Defaults to None (no Redis connection, SQLite database embedded with provider is used instead)                                         |
+| config.ipfsGateway                | Your IPFS Gateway if any                                                                                                                                        |
+| config.operatorServiceUrl         | Your custom operator service endpoint URL (Leave the value empty if no need to run compute job)                                                                 |
+| config.aquariusUrl\*\*\*          | Predefined Aquarius URL of multi-chain network. Defaults to Acentrik Aquarius URL                                                                               |
+| config.authorizedDecrypters\*\*\* | List of authorized addresses that are allowed to decrypt chain data. Use it to restrict access only to certain callers (e.g. Acentrik Aquarius wallet address). |
+| config.rbacUrl\*\*\*              | URL to the RBAC permissions server. Defaults to Acentrik RBAC Server                                                                                            |
+| config.log.level                  | Logging level                                                                                                                                                   |
+| config.allowNonPublicIp           | Allow Non Public IP to access from Provider                                                                                                                     |
+| config.providerFeeToken\*\*\*     | the address of ERC20 token used to get fees, or string containing a dict of chain_id to token address pairs                                                     |
 
 \*Provider Private Key
 
@@ -85,9 +87,9 @@ Optionally you can pull and mirror all the required images to your own private r
 
 \*\* Redis acting as a shared cache storage is highly recommended to support multi-replicas setup of provider service which ensure high availability. Without Redis, only 1 replica is supported.
 
-\*\*\* Aquarius URL refer to https://v1.aquarius.acentrik.io (DO NOT change)
+\*\*\* For config value such as `aquariusUrl` , `authorizedDecrypters` , `rbacUrl` & `providerFeeToken`. Please request from the Acentrik team, the values will likely be dependent on which network the Edge node will be running in and which Acentrik enviroment the Edge Node will be connecting to.
 
-\*\*\*\* RBAC URL refer to https://v1.rbac.acentrik.io (DO NOT change)
+For example, it'll be running Polygon Network & connecting to Acentrik Production Enviroment.
 
 #### Steps
 
