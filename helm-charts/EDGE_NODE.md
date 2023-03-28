@@ -24,6 +24,9 @@ First, the following resources are required for a proper runtime environment set
 2. An Ethereum RPC service provider account which supported Polygon network (such as Infura, Chainstack, Alchemy)
 3. Own-managed Kubernetes environment (Eg: EKS for AWS, AKS for Azure, GKE for GCP)
 4. Redis for stateless provider setup to support High Availability (Optional)
+5. **Outbound network** required on the kubernetes setup, this is because provider are required to request endpoint from Acentrik services, such as Aquarius & RBAC
+   - Refer to config such as `config.aquariusUrl` & `config.rbacUrl` on the values file
+6. (Optional) **Inbound network** required for provider, In order for the Edge Node to connect to Acentrik Marketplace, Provider need to be **public accesible** from Acentrik Marketplace.
 
 ---
 
@@ -94,6 +97,8 @@ For example, it'll be running Polygon Network & connecting to Acentrik Productio
 #### Steps
 
 Copy and modify the default helm values file as a new custom-values.yaml
+
+There's a helm values file for each network (Eg: values-polygon.yaml)
 
 ```
 helm upgrade provider ./provider \
