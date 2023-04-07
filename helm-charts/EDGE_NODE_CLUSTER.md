@@ -23,6 +23,8 @@ An edge node cluster contains 3 major components: Provider, Operator-Service and
 
 ## Prerequisites
 
+Setting up a Edge Node stack requires expertise on **Kubernetes**, **Helm** and **Cloud Services** such as AWS/Azure (Depending on which Cloud you will be running the Edge Node On)
+
 First, the following resources are required for a proper runtime environment setup:
 
 1. Own-managed Storage (either one below), for secure storage of the compute output file. (You can read more about setting up IPFS cluster on kubernetes [here](https://ipfscluster.io/documentation/guides/k8s/))
@@ -39,7 +41,8 @@ First, the following resources are required for a proper runtime environment set
 6. Redis for stateless provider setup to support High Availability (Optional)
 7. **Outbound network** required on the kubernetes setup, this is because provider are required to request endpoint from Acentrik services, such as Aquarius & RBAC
    - Refer to config such as `config.aquariusUrl` & `config.rbacUrl` on the values file
-8. (Optional) **Inbound network** required for provider, In order for the Edge Node to connect to Acentrik Marketplace, Provider need to be **public accesible** from Acentrik Marketplace.
+8. **Inbound network** required for provider, In order for Acentrik Marketplace to connect to the Edge Node, Provider need to be **public accesible** from Acentrik Marketplace
+   - Preferably a SSL Certificated public facing endpoint
 
 ---
 
@@ -213,6 +216,30 @@ helm upgrade ocean-compute-operator ./ocean-compute-operator \
 ---
 
 ## Post-installation
+
+### Verify if provider are working as expected
+
+Check if provider are running as expected, expected to see the pod are running with status 1/1
+
+```
+kubectl get pods -n polygon
+```
+
+Run a curl command to verify if Provider REST API are working
+
+This API will Retrieves Content-Type and Content-Length from the given asset URL and make sure if its valid
+
+```
+curl --location --request POST 'https://{{provider-url}}/api/services/fileinfo' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "type": "url",
+    "url": "https://acentrik-datasets.s3.ap-southeast-1.amazonaws.com/Public/heart.csv",
+    "checksum": false
+}'
+```
+
+<br />
 
 ### Initialize database
 
