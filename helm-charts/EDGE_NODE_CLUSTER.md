@@ -234,7 +234,7 @@ curl --location --request POST 'https://{{provider-url}}/api/services/fileinfo' 
 --header 'Content-Type: application/json' \
 --data-raw '{
     "type": "url",
-    "url": "https://acentrik-datasets.s3.ap-southeast-1.amazonaws.com/Public/heart.csv",
+    "url": "https://{{sample-asset-url}}/.csv",
     "checksum": false
 }'
 ```
