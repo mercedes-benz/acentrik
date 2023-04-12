@@ -43,6 +43,7 @@ First, the following resources are required for a proper runtime environment set
    - Refer to config such as `config.aquariusUrl` & `config.rbacUrl` on the values file
 8. **Inbound network** required for provider, In order for Acentrik Marketplace to connect to the Edge Node, Provider need to be **public accesible** from Acentrik Marketplace
    - Preferably a SSL Certificated public facing endpoint
+   - Please make sure that the endpoint is accessible over the internet and is not protected by a firewall or by credentials.
 
 ---
 
