@@ -28,20 +28,20 @@ Let's go through each step. <b> There's two possible scenario for purchasing dat
 
 ### Asset Information Json file
 
-Create an asset_info.json file and filled up the asset details
+Create an asset_info.json file and filled up the asset details (Below are just sample asset, do not consume this asset)
 
 ```
 {
   "network": "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
   "networkName": "goerli",
   "networkID": 5,
-  "aquariusUri": "https://v1.aquarius.dev.acentrik.io",
-  "assetProviderUri": "https://v1.provider.goerli.dev.acentrik.io",
+  "aquariusUri": "https://v1.aquarius.sandbox.acentrik.io",
+  "assetProviderUri": "https://v1.provider-ipfs.goerli.sandbox.acentrik.io",
   "assetDid": "did:op:f65f1608596933043fb7d5239bbb8ee5094fae030e1bb351d6a3178030636bdb",
   "assetTokenAddress": "0x8c7A2947a8Cb37acD02d9e60233462B0C69cC7f2",
   "assetOwnerAddress": "0x002D6F48A56E864b910Bc219B63440C6F6508Fe4",
   "assetBaseTokenAddress": "0x07865c6e87b9f70255377e024ace6630c1eaa37f",
-  "algorithmProviderUri": "https://v1.provider.goerli.dev.acentrik.io",
+  "algorithmProviderUri": "https://v1.provider-ipfs.goerli.sandbox.acentrik.io",
   "algorithmDid": "did:op:2c33782e902687e4f6647e86c7408b5bae8cbe0923f970ed3adc2ed6c84395d8",
   "algorithmTokenAddress": "0x127D5F22b7beee64263ED291065473365715547f",
   "algorithmOwnerAddress": "0x2E33C6014222A47585605F8379a1877eaaF0ec13",

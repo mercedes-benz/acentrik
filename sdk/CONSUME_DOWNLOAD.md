@@ -23,15 +23,15 @@ Let's go through each step. <b> There's two possible scenario, Fixed Rate and Fr
 
 ### Asset Information Json file
 
-Create an asset_info.json file and filled up the asset details
+Create an asset_info.json file and filled up the asset details (Below are just sample asset, do not consume this asset)
 
 ```
 {
   "network": "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
   "networkName": "goerli",
   "networkID": 5,
-  "aquariusUri": "https://v1.aquarius.dev.acentrik.io",
-  "assetProviderUri": "https://v1.provider.goerli.dev.acentrik.io",
+  "aquariusUri": "https://v1.aquarius.sandbox.acentrik.io",
+  "assetProviderUri": "https://v1.provider-ipfs.goerli.sandbox.acentrik.io",
   "assetDid": "did:op:7cec0d397a24d38933cbf25a442cb426329fdb220c1b3e206e7545889e521173",
   "assetTokenAddress": "0xea1122E1Be1104Ac73732a98a7d6C84cf6476d98",
   "assetOwnerAddress": "0xd1CdD6182f86456712e49Eea0C03aF5A1375E8Ec",
