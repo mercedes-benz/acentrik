@@ -85,8 +85,8 @@ from ocean_lib.ocean.ocean import Ocean
 config = get_config_dict("goerli")
 
 # Set config parameter
-config['METADATA_CACHE_URI'] = "https://v1.aquarius.dev.acentrik.io"  # Aquarius URI
-config['PROVIDER_URL'] = "https://v1.provider.goerli.dev.acentrik.io"  # Provider URI
+config['METADATA_CACHE_URI'] = "https://v1.aquarius.sandbox.acentrik.io"  # Aquarius URI
+config['PROVIDER_URL'] = "https://v1.provider-ipfs.goerli.sandbox.acentrik.io"  # Provider URI
 
 ocean = Ocean(config)
 
