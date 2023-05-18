@@ -35,13 +35,13 @@ First, the following resources are required for a proper runtime environment set
 
    Manual database creation is required before helm installation
 
-3. An Ether wallet (MetaMask) account for the Provider and Compute-to-Data (C2D) engine (You can read more about setting up a Metamask Wallet [here](https://support.acentrik.io/help/en-us/8-starter-kit/914-wallet-set-up-metamask-reference))
-4. An Ethereum RPC service provider account which supported Polygon network (such as Infura, Chainstack, Alchemy)
+3. An EVM-based wallet (MetaMask) account for the Provider and Compute-to-Data (C2D) engine (You can read more about setting up a Metamask Wallet [here](https://support.acentrik.io/help/en-us/8-starter-kit/914-wallet-set-up-metamask-reference))
+4. An EVM RPC service provider subscription (can be free or lowest tier subscription) which supported Polygon network (such as Infura, Chainstack, Alchemy, ...)
 5. Own-managed Kubernetes environment (Eg: EKS for AWS, AKS for Azure, GKE for GCP)
 6. Redis for stateless provider setup to support High Availability (Optional)
 7. **Outbound network** required on the kubernetes setup, this is because provider are required to request endpoint from Acentrik services, such as Aquarius & RBAC
    - Refer to config such as `config.aquariusUrl` & `config.rbacUrl` on the values file
-8. **Inbound network** required for provider, In order for Acentrik Marketplace to connect to the Edge Node, Provider need to be **public accesible** from Acentrik Marketplace
+8. **Inbound network** required for provider, In order for Acentrik Marketplace to connect to the Edge Node, Provider need to be internet-facing and **publically accessible** from Acentrik Marketplace
    - Preferably a SSL Certificated public facing endpoint
    - Please make sure that the endpoint is accessible over the internet and is not protected by a firewall or by credentials.
 9. To confidently validate above prerequisite, a **Hello world API** could be deploy on your infrastucture setup and cover at least point 5, 8. If **Hellow world API** works as expected, the kubernetes object can be replace with Edge Node Cluster components.
