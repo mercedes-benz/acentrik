@@ -22,13 +22,13 @@ Setting up a Edge Node stack requires expertise on **Kubernetes**, **Helm** and 
 
 First, the following resources are required for a proper runtime environment setup:
 
-1. An Ether wallet (MetaMask) account for the Provider (You can read more about setting up a Metamask Wallet [here](https://support.acentrik.io/help/en-us/8-starter-kit/914-wallet-set-up-metamask-reference))
-2. An Ethereum RPC service provider account which supported Polygon network (such as Infura, Chainstack, Alchemy)
+1. An EVM-based wallet (MetaMask) account for the Provider (You can read more about setting up a Metamask Wallet [here](https://support.acentrik.io/help/en-us/8-starter-kit/914-wallet-set-up-metamask-reference))
+2. An EVM RPC service provider subscription (can be free or lowest tier subscription) which supported Polygon network (such as Infura, Chainstack, Alchemy, ...)
 3. Own-managed Kubernetes environment (Eg: EKS for AWS, AKS for Azure, GKE for GCP)
 4. Redis for stateless provider setup to support High Availability (Optional)
 5. **Outbound network** required on the kubernetes setup, this is because provider are required to request endpoint from Acentrik services, such as Aquarius & RBAC
    - Refer to config such as `config.aquariusUrl` & `config.rbacUrl` on the values file
-6. **Inbound network** required for provider, In order for Acentrik Marketplace to connect to the Edge Node, Provider need to be **public accesible** from Acentrik Marketplace
+6. **Inbound network** required for provider, In order for Acentrik Marketplace to connect to the Edge Node, Provider need to be internet-facing and **publically accessible** from Acentrik Marketplace
    - Preferably a SSL Certificated public facing endpoint
    - Please make sure that the endpoint is accessible over the internet and is not protected by a firewall or by credentials.
 7. To confidently validate above prerequisite, a **Hello world API** could be deploy on your infrastucture setup and cover at least point 3, 6. If **Hellow world API** works as expected, the kubernetes object can be replace with Edge Node component.
