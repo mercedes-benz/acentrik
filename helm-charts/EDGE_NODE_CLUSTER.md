@@ -44,6 +44,7 @@ First, the following resources are required for a proper runtime environment set
 8. **Inbound network** required for provider, In order for Acentrik Marketplace to connect to the Edge Node, Provider need to be **public accesible** from Acentrik Marketplace
    - Preferably a SSL Certificated public facing endpoint
    - Please make sure that the endpoint is accessible over the internet and is not protected by a firewall or by credentials.
+9. To confidently validate above prerequisite, a **Hello world API** could deployed on your infrastucture setup and cover at least point 5, 8. Then the kubernetes object can be replace with Edge Node Cluster components.
 
 ---
 
