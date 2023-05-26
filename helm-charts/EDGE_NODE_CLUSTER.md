@@ -1,4 +1,4 @@
-# Edge Node Cluster Guidelines and Setup Instructions
+# Edge Computing Cluster Guidelines and Setup Instructions
 
 - [Overview](#overview)
 - [Prerequisites](#prerequisites)
@@ -15,7 +15,7 @@
 
 ## Overview
 
-An edge node cluster contains 3 major components: Provider, Operator-Service and Operator-Engine
+An Edge Computing Cluster contains 3 major components: Provider, Operator-Service and Operator-Engine
 
 ![component overview](./edge-node-cluster-overview.png)
 
@@ -44,14 +44,14 @@ First, the following resources are required for a proper runtime environment set
 8. **Inbound network** required for provider, In order for Acentrik Marketplace to connect to the Edge Node, Provider need to be internet-facing and **publically accessible** from Acentrik Marketplace
    - Preferably a SSL Certificated public facing endpoint
    - Please make sure that the endpoint is accessible over the internet and is not protected by a firewall or by credentials.
-9. To confidently validate above prerequisite, a **Hello world API** could be deploy on your infrastucture setup and cover at least point 5, 8. If **Hello world API** works as expected, the kubernetes object can be replace with Edge Node Cluster components.
+9. To confidently validate above prerequisite, a **Hello world API** could be deploy on your infrastucture setup and cover at least point 5, 8. If **Hello world API** works as expected, the kubernetes object can be replace with Edge Computing Cluster components.
 
 ---
 
 ## Tools
 
 1. Helm 3 CLI - [install](https://helm.sh/docs/intro/install/)
-   - Helm CLI are for helm chart installation, Edge Node Cluster will be deploying with Helm Chart
+   - Helm CLI are for helm chart installation, Edge Computing Cluster will be deploying with Helm Chart
 2. Kubectl CLI - [install](https://kubernetes.io/docs/tasks/tools/#kubectl)
    - Kubectl CLI are use to run commands against Kubernetes cluster
 3. curl CLI - [install](https://curl.se/download.html)
@@ -245,7 +245,7 @@ curl --location --request POST 'https://{{provider-url}}/api/services/fileinfo' 
 
 ### Initialize database
 
-The newly created edge node Cluster must be initialized after the installation completed.
+The newly created Edge Computing Cluster must be initialized after the installation completed.
 
 Assuming your Operator-Service (operator-api) is running on namespace 'ocean-operator' with port 8050, perform the following actions.
 
@@ -273,7 +273,7 @@ curl -X POST "http://localhost:8050/api/v1/operator/pgsqlinit" -H "accept: appli
 
 <br />
 
-## S3 As Edge Node Cluster Storage
+## S3 As Edge Computing Cluster Storage
 
 ### If you're choosing s3 bucket to store the compute outputs
 
