@@ -1,7 +1,7 @@
 ## market image version
 image:
   repository: public.ecr.aws/acentrik/oceanprotocol/provider-py
-  tag: ak-v1.0.0
+  tag: ak-v1.1.0
   ## Specify a imagePullPolicy
   pullPolicy: Always
 
