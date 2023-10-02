@@ -17,7 +17,7 @@
 
 An Edge Computing Cluster contains 3 major components: Provider, Operator-Service and Operator-Engine
 
-![component overview](./edge-node-cluster-overview.png)
+![component overview](./edge-computing-cluster-overview.png)
 
 ---
 
