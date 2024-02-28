@@ -51,6 +51,11 @@ spec:
             secretKeyRef:
               key: PROVIDER_PRIVATE_KEY
               name: {{ .Release.Name }}-secret-config
+        - name: UNIVERSAL_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              key: UNIVERSAL_PRIVATE_KEY
+              name: {{ .Release.Name }}-secret-config
         - name: LOG_CFG
           valueFrom:
             configMapKeyRef:

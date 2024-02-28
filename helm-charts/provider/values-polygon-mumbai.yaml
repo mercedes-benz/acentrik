@@ -1,7 +1,7 @@
 ## market image version
 image:
   repository: public.ecr.aws/acentrik/oceanprotocol/provider-py
-  tag: ak-v1.1.0
+  tag: ak-v2.0.0
   ## Specify a imagePullPolicy
   pullPolicy: Always
 
@@ -18,7 +18,8 @@ secretstore:
 ## Secret relevant values or keys, depends on secretstore flag
 secret:
   infuraProjectId: <INFURA_PROJECT_ID>
-  providerPrivateKey: changeme
+  providerPrivateKey: '{"5": "<private_key>", "80001": "<private_key>"}'
+  universalPrivateKey: <private_key>
   networkUrl: <RPC_URL>
   redisConnection: rediss://:PASSWORD@HOST:PORT ## Leave the value empty to disable redis connection
 
@@ -38,9 +39,9 @@ config:
     ## CRITICAL	50, ERROR	40, WARNING	30, INFO 20, DEBUG 10, NOTSET	0
     level: INFO
   allowNonPublicIp: "0"
-  ## providerFeeToken - baseToken for provider fee (0x2791 is USDC in polygon mumbai network).
+  ## providerFeeToken - baseToken for provider fee (0x2791 is USDC in polygon supernet network).
   ## Please request the value from Acentrik team, value will dependent on which network the Provider connecting to
-  providerFeeToken: "0xE097d6B3100777DC31B34dC2c58fB524C2e76921"
+  providerFeeToken: '{"5": "0x6f14c02fc1f78322cfd7d707ab90f18bad3b54f5", "80001": "0xE097d6B3100777DC31B34dC2c58fB524C2e76921", "other-network-id": "<provider_fee_token_other_network>"}'
 
 podAutoScaler:
   enabled: true
