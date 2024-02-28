@@ -50,7 +50,7 @@ Deploy the following helm chart with appropriate customized values. The download
 
 |     | Helm Chart             | Recommended Namespace          | Description                                                                         |
 | :-- | :--------------------- | :----------------------------- | ----------------------------------------------------------------------------------- |
-| 1   | [provider](./provider) | network specific, e.g. polygon | An Ethereum network-specific deployment object to serve an interface to Marketplace |
+| 1   | [provider](./provider) | ocean-provider | An Ethereum network-independent object to serve an interface to Marketplace |
 
 Note: Modify the helm charts according on your own Kubernetes cluster setup when necessary. Alternatively you can deploy the standard Kubernetes objects by creating your own deployment yaml files.
 
@@ -72,9 +72,10 @@ Optionally you can pull and mirror all the required images to your own private r
 
 | Variable                          | Description                                                                                                                                                     |
 | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| secret.infuraProjectId            | Ethereum RPC Project ID                                                                                                                                         |
-| secret.providerPrivateKey\*       | Private key of your provider wallet account, which used to encrypt the data asset endpoint                                                                      |
-| secret.networkUrl                 | Network name: polygon                                                                                                                                           |
+| secret.infuraProjectId            | Infura Project ID  |
+| secret.providerPrivateKey\*       | A string containing a dict of chain_id to private_key string pair. It is used to encrypt the data asset endpoint. <br/><br/> Example: <br/> { 80001: '<private_key_for_mumbai>', 5: '<private_key_for_goerli'>} |
+| secret.networkUrl                 | A string containing a dict of chain_id to rpc_url string pair. <br/><br/> Example: <br/> { 80001: '<rpc_url_for_mumbai>', 5: '<rpc_url_for_goerli'>} <br/> |
+| secret.universalPrivateKey\*\*        | A string of private key string that can be used across all networks. The key is mainly used for provider's signature. <br/><br/> Example: '<universal_private_key_string>'                                        |
 | secret.redisConnection\*\*        | Connection URL to Redis. Defaults to None (no Redis connection, SQLite database embedded with provider is used instead)                                         |
 | config.ipfsGateway                | Your IPFS Gateway if any                                                                                                                                        |
 | config.operatorServiceUrl         | Your custom operator service endpoint URL (Leave the value empty if no need to run compute job)                                                                 |
@@ -83,7 +84,7 @@ Optionally you can pull and mirror all the required images to your own private r
 | config.rbacUrl\*\*\*              | URL to the RBAC permissions server. Defaults to Acentrik RBAC Server                                                                                            |
 | config.log.level                  | Logging level                                                                                                                                                   |
 | config.allowNonPublicIp           | Allow Non Public IP to access from Provider                                                                                                                     |
-| config.providerFeeToken\*\*\*     | the address of ERC20 token used to get fees, or string containing a dict of chain_id to token address pairs                                                     |
+| config.providerFeeToken\*\*\*     | A string containing a dict of chain_id to token address pairs, used to get the fee  <br/><br/>Example: <br/>{ 80001: '<provider_fee_token_mumbai>', 5: '<provider_fee_token_goerli'>}                                                   |
 
 \*Provider Private Key
 
