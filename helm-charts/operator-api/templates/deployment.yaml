@@ -1,0 +1,191 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  progressDeadlineSeconds: 600
+  replicas: {{ .Values.replica }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+      - env:
+        - name: OPERATOR_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              key: OPERATOR_ADDRESS
+              name: {{ .Release.Name }}-config
+        - name: ALGO_POD_TIMEOUT
+          valueFrom:
+            configMapKeyRef:
+              key: ALGO_POD_TIMEOUT
+              name: {{ .Release.Name }}-config
+        - name: SIGNATURE_REQUIRED
+          valueFrom:
+            configMapKeyRef:
+              key: SIGNATURE_REQUIRED
+              name: {{ .Release.Name }}-config
+        - name: ALLOWED_PROVIDERS
+          valueFrom:
+            configMapKeyRef:
+              key: ALLOWED_PROVIDERS
+              name: {{ .Release.Name }}-config
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_DB
+              name: {{ .Release.Name }}-secret-config
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_USER
+              name: {{ .Release.Name }}-secret-config
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_PASSWORD
+              name: {{ .Release.Name }}-secret-config
+        - name: POSTGRES_HOST
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_HOST
+              name: {{ .Release.Name }}-secret-config
+        - name: POSTGRES_PORT
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_PORT
+              name: {{ .Release.Name }}-secret-config
+        - name: DEFAULT_NAMESPACE
+          valueFrom:
+            configMapKeyRef:
+              key: DEFAULT_NAMESPACE
+              name: {{ .Release.Name }}-config
+        {{- if .Values.secret.ipfs.apiKey }}
+        - name: X-API-KEY
+          valueFrom:
+            secretKeyRef:
+              key: IPFS_API_KEY
+              name: {{ .Release.Name }}-secret-config
+        {{- end }}
+        {{- if .Values.secret.ipfs.apiClient }}
+        - name: CLIENT-ID
+          valueFrom:
+            secretKeyRef:
+              key: IPFS_API_CLIENT
+              name: {{ .Release.Name }}-secret-config
+        {{- end }}
+        - name: inputVolumesize
+          valueFrom:
+            configMapKeyRef:
+              key: INPUT_VOLUME_SIZE
+              name: {{ .Release.Name }}-config
+        - name: outputVolumesize
+          valueFrom:
+            configMapKeyRef:
+              key: OUTPUT_VOLUME_SIZE
+              name: {{ .Release.Name }}-config
+        - name: adminlogsVolumesize
+          valueFrom:
+            configMapKeyRef:
+              key: ADMIN_LOGS_VOLUME_SIZE
+              name: {{ .Release.Name }}-config
+        - name: requests_cpu
+          valueFrom:
+            configMapKeyRef:
+              key: REQUESTS_CPU
+              name: {{ .Release.Name }}-config
+        - name: requests_memory
+          valueFrom:
+            configMapKeyRef:
+              key: REQUESTS_MEMORY
+              name: {{ .Release.Name }}-config
+        - name: limits_cpu
+          valueFrom:
+            configMapKeyRef:
+              key: LIMITS_CPU
+              name: {{ .Release.Name }}-config
+        - name: limits_memory
+          valueFrom:
+            configMapKeyRef:
+              key: LIMITS_MEMORY
+              name: {{ .Release.Name }}-config
+        {{- if .Values.config.storageExpiry }}
+        - name: STORAGE_EXPIRY
+          valueFrom:
+            configMapKeyRef:
+              key: STORAGE_EXPIRY
+              name: {{ .Release.Name }}-config
+        {{- end }}
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              key: LOG_LEVEL
+              name: {{ .Release.Name }}-config
+        name: {{ .Chart.Name }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 8050
+          name: http
+        {{- if .Values.livenessProbe.enabled }}
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+          successThreshold: {{ .Values.livenessProbe.successThreshold }}
+          failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+        {{- end }}
+        {{- if .Values.readinessProbe.enabled }}
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+          successThreshold: {{ .Values.readinessProbe.successThreshold }}
+          failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+        {{- end }}
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - name: env-file
+          mountPath: /.dockerenv
+          subPath: .dockerenv
+        {{- if .Values.secretstore.enabled }}
+        - name: {{ .Release.Name }}-{{ .Values.secretstore.provider }}-secrets
+          mountPath: /mnt/secrets-store/
+          readOnly: true
+        {{- end }}
+      volumes:
+      - name: env-file
+        configMap:
+          name: {{ .Release.Name }}-config
+      {{- if .Values.secretstore.enabled }}
+      - name: {{ .Release.Name }}-{{ .Values.secretstore.provider }}-secrets
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: {{ .Release.Name }}-{{ .Values.secretstore.provider }}-secrets
+      {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30

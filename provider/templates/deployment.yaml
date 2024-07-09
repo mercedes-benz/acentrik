@@ -1,0 +1,156 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replica }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+      - env:
+        - name: ARTIFACTS_PATH
+          value: /ocean-provider/artifacts
+        - name: ALLOW_NON_PUBLIC_IP
+          valueFrom:
+            configMapKeyRef:
+              key: ALLOW_NON_PUBLIC_IP
+              name: {{ .Release.Name }}-config
+        - name: AUTHORIZED_DECRYPTERS
+          valueFrom:
+            configMapKeyRef:
+              key: AUTHORIZED_DECRYPTERS
+              name: {{ .Release.Name }}-config
+        - name: RBAC_SERVER_URL
+          valueFrom:
+            configMapKeyRef:
+              key: RBAC_SERVER_URL
+              name: {{ .Release.Name }}-config
+        - name: NETWORK_URL
+          valueFrom:
+            secretKeyRef:
+              key: NETWORK_URL
+              name: {{ .Release.Name }}-secret-config
+        - name: INFURA_PROJECT_ID
+          valueFrom:
+            secretKeyRef:
+              key: INFURA_PROJECT_ID
+              name: {{ .Release.Name }}-secret-config
+        - name: PROVIDER_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              key: PROVIDER_PRIVATE_KEY
+              name: {{ .Release.Name }}-secret-config
+        - name: LOG_CFG
+          valueFrom:
+            configMapKeyRef:
+              key: LOG_CFG
+              name: {{ .Release.Name }}-config
+        - name: OCEAN_PROVIDER_URL
+          valueFrom:
+            configMapKeyRef:
+              key: OCEAN_PROVIDER_URL
+              name: {{ .Release.Name }}-config
+        - name: OCEAN_PROVIDER_WORKERS
+          valueFrom:
+            configMapKeyRef:
+              key: OCEAN_PROVIDER_WORKERS
+              name: {{ .Release.Name }}-config
+        - name: OCEAN_PROVIDER_TIMEOUT
+          valueFrom:
+            configMapKeyRef:
+              key: OCEAN_PROVIDER_TIMEOUT
+              name: {{ .Release.Name }}-config
+        - name: OPERATOR_SERVICE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: OPERATOR_SERVICE_URL
+              name: {{ .Release.Name }}-config
+        - name: AQUARIUS_URL
+          valueFrom:
+            configMapKeyRef:
+              key: AQUARIUS_URL
+              name: {{ .Release.Name }}-config
+        - name: REQUEST_RETRIES
+          valueFrom:
+            configMapKeyRef:
+              key: REQUEST_RETRIES
+              name: {{ .Release.Name }}-config
+        - name: PROVIDER_FEE_TOKEN
+          valueFrom:
+            configMapKeyRef:
+              key: PROVIDER_FEE_TOKEN
+              name: {{ .Release.Name }}-config
+        {{- if .Values.secret.redisConnection }}
+        - name: REDIS_CONNECTION
+          valueFrom:
+            secretKeyRef:
+              key: REDIS_CONNECTION
+              name: {{ .Release.Name }}-secret-config
+        {{- end }}
+        name: {{ .Chart.Name }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 8030
+          name: http
+        {{- if .Values.livenessProbe.enabled }}
+        livenessProbe:
+          tcpSocket:
+            port: http
+          initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+          successThreshold: {{ .Values.livenessProbe.successThreshold }}
+          failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+        {{- end }}
+        {{- if .Values.readinessProbe.enabled }}
+        readinessProbe:
+          tcpSocket:
+            port: http
+          initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+          successThreshold: {{ .Values.readinessProbe.successThreshold }}
+          failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+        {{- end }}
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - name: logging-file
+          mountPath: /ocean-provider/logging.yaml
+          subPath: logging.yaml
+        {{- if .Values.secretstore.enabled }}
+        - name: {{ .Release.Name }}-{{ .Values.secretstore.provider }}-secrets
+          mountPath: /mnt/secrets-store/
+          readOnly: true
+        {{- end }}
+      volumes:
+      - name: logging-file
+        configMap:
+          name: {{ .Release.Name }}-config
+      {{- if .Values.secretstore.enabled }}
+      - name: {{ .Release.Name }}-{{ .Values.secretstore.provider }}-secrets
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: {{ .Release.Name }}-{{ .Values.secretstore.provider }}-secrets
+      {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
