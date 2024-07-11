@@ -11,6 +11,7 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s', handl
 logging.info("Starting logging")
 
 # define paths
+
 path_input = Path(os.environ.get("INPUTS", "/data/inputs"))
 path_output = Path(os.environ.get("OUTPUTS", "/data/outputs"))
 path_logs = Path(os.environ.get("LOGS", "/data/logs"))
@@ -21,7 +22,11 @@ input_files_path = Path(os.path.join(path_input, did))
 input_files = list(input_files_path.iterdir())
 first_input = input_files.pop()
 
-path_input_file = first_input
+path_input_file = first_input # this contains the dataset
+
+# to retrieve consumer parameters if available, note that this function currently on available on SDK
+# it is not supported on Acentrik marketplace UI 
+# consumer_parameter_files_path = Path(os.path.join(path_input, 'algoCustomData.json'))
 
 # you can define the output path here, either method works
 path_output_file_A = path_output / 'output_A.csv' # method 1

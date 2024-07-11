@@ -19,7 +19,7 @@ path_logs = Path(os.environ.get("LOGS", "/data/logs")) # get the log directory
 # load aggregate dataset if you want to use aggregate dataset
 dids = json.loads(os.environ.get("DIDS", '[]'))
 did = dids[0]
-aggregate_dataset_files_path = Path(os.path.join(path_input, did)) # this contains 
+aggregate_dataset_files_path = Path(os.path.join(path_input, did)) # this contains the aggregate algorithm 
 input_files = list(aggregate_dataset_files_path.iterdir())
 aggregate_input = input_files.pop()
 
@@ -28,7 +28,7 @@ logging.debug(f'Loaded aggregate dataset: {aggregate_input}')
 
 
 # load result of the federated computation
-fed_result_files_path = Path(os.path.join(path_input, 'algoCustomData.json'))
+fed_result_files_path = Path(os.path.join(path_input, 'algoCustomData.json')) # this contains the federated job result URL and consumer parameters if available
 with open(fed_result_files_path, "r") as json_file:
     algoCustomData = json.load(json_file)
 
