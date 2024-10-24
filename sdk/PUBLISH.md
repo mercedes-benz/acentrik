@@ -20,7 +20,7 @@ Let's go through each step. <b> There's two possible scenario (Compute / Downloa
 ### Prerequisites
 
 - PublisherA's Wallets have Publisher Roles
-- Base Token address (Eg: USDC on goerli network are "0x07865c6E87B9F70255377e024ace6630C1Eaa37F")
+- Base Token address (Eg: USDC on amoy network are "0xD6E0EF71AECedA1d3c6A4a3BcfFCb2EB6bfaF469")
 - Clone words.json file from [OceanJs Repository](https://raw.githubusercontent.com/oceanprotocol/ocean.js/v2.7.0-next.2/src/utils/data/words.json)
 - Aquarius and Provider Uri
 - Set config parameter
