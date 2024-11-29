@@ -2,15 +2,9 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  annotations:
-    {{- if .Values.ingress.certManager }}
-    kubernetes.io/tls-acme: "true"
-    {{- end }}
-    {{- range $key, $value := .Values.ingress.annotations }}
-    {{ $key }}: {{ $value | quote }}
-    {{- end }}
   name: {{ $.Release.Name }}
 spec:
+  ingressClassName: "nginx"
   rules:
   {{- range .Values.ingress.hosts }}
   - host: {{ .name }}
@@ -21,8 +15,8 @@ spec:
           service:
             name: {{ $.Release.Name }}
             port:
-              number: {{ $.Values.service.servicePort | default "8050" }}
-        pathType: {{ $.Values.ingress.pathType | default "ImplementationSpecific" }}
+              number: 8050
+        pathType: ImplementationSpecific
   {{- end }}
   tls:
 {{- range .Values.ingress.hosts }}

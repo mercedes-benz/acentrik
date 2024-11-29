@@ -2,6 +2,8 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  name: {{ $.Release.Name }}
+  {{- if .Values.ingress.certManager }}
   annotations:
     {{- if .Values.ingress.certManager }}
     kubernetes.io/tls-acme: "true"
@@ -9,8 +11,9 @@ metadata:
     {{- range $key, $value := .Values.ingress.annotations }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
-  name: {{ $.Release.Name }}
+  {{- end }}
 spec:
+  ingressClassName: "nginx"
   rules:
   {{- range .Values.ingress.hosts }}
   - host: {{ .name }}

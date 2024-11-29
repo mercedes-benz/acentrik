@@ -1,10 +1,10 @@
 ## namespace
-namespace: ocean-operator
+namespace: "{{instance_name}}-ocean-operator"
 
 ## market image version
 image:
   repository: public.ecr.aws/acentrik/oceanprotocol/operator-service
-  tag: ak-v1.0.0
+  tag: 3.1.0
   ## Specify a imagePullPolicy
   pullPolicy: Always
 
@@ -19,23 +19,14 @@ postgresql:
 ## ref: https://secrets-store-csi-driver.sigs.k8s.io
 ## ref: https://github.com/aws/secrets-store-csi-driver-provider-aws
 secretstore:
-  enabled: false
+  enabled: true
   provider: aws
 
 ## Secret relevant values or keys, depends on secretstore flag
 secret:
-  postgres:
-    db:
-      postgresdb
-      #objectName: parameter name
-      #objectType: "secretsmanager" or "ssmparameter"
-    user: postgresadmin
-    password: changeme
-    host: postgresql.ocean-operator.svc.cluster.local
-    port: "5432"
   ipfs:
-    apiKey:
-    apiClient:
+    apiKey : false
+    apiClient : false
 
 ## ConfigMap and secret relevant values
 config:
@@ -44,7 +35,7 @@ config:
   storageExpiry: "5184000"
   signatureRequired: "0"
   allowedProviders: ""
-  defaultNamespace: ocean-compute
+  defaultNamespace: "ocean-compute"
   resource:
     inputVolumeSize: "1Gi"
     outputVolumeSize: "1Gi"
@@ -57,11 +48,11 @@ config:
     level: INFO
 
 podAutoScaler:
-  enabled: false
+  enabled: true
   resource:
-    averageUtilization: "70"
+    averageUtilization: "200"
   minReplicas: "1"
-  maxReplicas: "3"
+  maxReplicas: "4"
 
 service:
   servicePort: 8050
@@ -134,10 +125,10 @@ readinessProbe:
   failureThreshold: 10
   successThreshold: 1
 ## Configure pod resources
-# resources:
-#   limits:
-#     cpu: 500m
-#     memory: 500Mi
-#   requests:
-#     cpu: 500m
-#     memory: 500Mi
+resources:
+  limits:
+    cpu: 500m
+    memory: 1024Mi
+  requests:
+    cpu: 200m
+    memory: 128Mi

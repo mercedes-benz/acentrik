@@ -1,0 +1,15 @@
+{{- if .Values.ingress.certManager}}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: tls-certificate-{{ .Release.Name }}
+{{- range .Values.ingress.hosts }}
+spec:
+  secretName: {{ .tlsSecret }}
+  dnsNames:
+    - {{ .name}}
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+{{- end }}
+{{- end }}

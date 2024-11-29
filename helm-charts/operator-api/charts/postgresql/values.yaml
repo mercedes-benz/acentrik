@@ -42,7 +42,7 @@ storageclass:
   #  provisioner: kubernetes.io/aws-ebs
   #  parameters:
   #  fsType: ext4
-  #  type: gp2
+  #  type: {{instance_name}}-standard-v1
   #  allowedTopologies:
   #  enabled: true
   #  matchLabelExpressions:

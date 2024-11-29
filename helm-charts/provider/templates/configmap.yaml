@@ -10,19 +10,6 @@ data:
         console:
             class: logging.StreamHandler
             formatter: simple
-    loggers:
-        ocean_provider.routes:
-            level: INFO
-            handlers: [console]
-            propagate: yes
-        ocean_provider.utils:
-            level: INFO
-            handlers: [console]
-            propagate: yes
-        urllib3.connectionpool:
-            level: INFO
-            handlers: [console]
-            propagate: no
     root:
         level: {{ .Values.config.log.level }}
         handlers: [console]
@@ -33,6 +20,7 @@ data:
   OPERATOR_SERVICE_URL: {{ .Values.config.operatorServiceUrl }}
   AQUARIUS_URL: {{ .Values.config.aquariusUrl }}
   RBAC_SERVER_URL: {{ .Values.config.rbacUrl | quote }}
+  PROVIDER_MANAGEMENT_URL: {{ .Values.config.providerManagementUrl | quote }}
   REQUEST_RETRIES: {{ .Values.config.requestRetries | quote }}
   AUTHORIZED_DECRYPTERS: {{ .Values.config.authorizedDecrypters | quote }}
   ALLOW_NON_PUBLIC_IP: {{ .Values.config.allowNonPublicIp | quote }}

@@ -8,7 +8,7 @@ metadata:
 spec:
   ports:
     - name: {{ .Release.Name }}
-      port:  {{ .Values.service.servicePort | default "8030" }}
+      port: {{ .Values.service.servicePort | default "8030" }}
       protocol: TCP
       targetPort: 8030
   selector:

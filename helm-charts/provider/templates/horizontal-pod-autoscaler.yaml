@@ -1,5 +1,5 @@
 {{- if .Values.podAutoScaler.enabled }}
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   annotations:
@@ -14,5 +14,11 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ .Release.Name }}
-  targetCPUUtilizationPercentage: {{ .Values.podAutoScaler.resource.averageUtilization }}
+  metrics:
+  - resource:
+      name: cpu
+      target:
+        averageUtilization: {{ .Values.podAutoScaler.resource.averageUtilization }}
+        type: Utilization
+    type: Resource
 {{- end }}

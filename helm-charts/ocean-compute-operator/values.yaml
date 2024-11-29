@@ -4,7 +4,7 @@ namespace: ocean-compute
 ## market image version
 image:
   repository: public.ecr.aws/acentrik/oceanprotocol/operator-engine
-  tag: ak-v1.0.0
+  tag: 3.1.0
   ## Specify a imagePullPolicy
   pullPolicy: Always
 
@@ -15,7 +15,7 @@ replica: 1
 ## ref: https://secrets-store-csi-driver.sigs.k8s.io
 ## ref: https://github.com/aws/secrets-store-csi-driver-provider-aws
 secretstore:
-  enabled: false
+  enabled: true
   provider: aws
 
 ## Secret relevant values or keys, depends on secretstore flag
@@ -30,12 +30,9 @@ secret:
     host: postgresql.ocean-operator.svc.cluster.local
     port: "5432"
   operatorPrivateKey: ""
-  aws:
-    accessKeyId:
-    secretAccessKey:
   ipfs:
-    apiKey:
-    apiClient:
+    apiKey: false
+    apiClient: false
 
 ## ConfigMap relevant values
 config:
@@ -56,26 +53,37 @@ config:
     expiryTime: "1440h"
   storageClass: standard
   pod:
-    configurationContainer: public.ecr.aws/acentrik/oceanprotocol/pod-configuration:ak-v1.0.0
-    publishContainer: public.ecr.aws/acentrik/oceanprotocol/pod-publishing:ak-v1.0.1
+    configurationContainer: public.ecr.aws/acentrik/oceanprotocol/pod-configuration:3.1.0
+    publishContainer: public.ecr.aws/acentrik/oceanprotocol/pod-publishing:3.1.0
   log:
     level: INFO
   debug:
     noCleanup: false
   serviceAccount: default
+  priceMinute: ""
   maxJobDuration: "900"
+  env:
+    nCpu: "1"
+    cpuType: ""
+    gpuRam: "0"
+    gpuType: "0"
+    ramGB: "1"
+    diskGB: "3"
+    priceMinute: "0"
+    description: ""
+    storageExpiry: "0"
 
 ## Configure pod resources
-# resources:
-#   limits:
-#     cpu: 500m
-#     memory: 500Mi
-#   requests:
-#     cpu: 500m
-#     memory: 500Mi
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 50m
+    memory: 96Mi
 
 storageclass:
-  enabled: true
+  enabled: false
   name: standard
   reclaimPolicy: Delete
   ## AWS provisioner
