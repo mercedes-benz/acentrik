@@ -17,6 +17,9 @@ spec:
     metadata:
       labels:
         app: {{ .Release.Name }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
     spec:
       containers:
       - env:
@@ -122,6 +125,51 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: MAX_JOB_DURATION
+              name: {{ .Release.Name }}-config
+        - name: nCpu
+          valueFrom:
+            configMapKeyRef:
+              key: ENV_N_CPU
+              name: {{ .Release.Name }}-config
+        - name: cpuType
+          valueFrom:
+            configMapKeyRef:
+              key: ENV_CPU_TYPE
+              name: {{ .Release.Name }}-config
+        - name: gpuRam
+          valueFrom:
+            configMapKeyRef:
+              key: ENV_GPU_RAM
+              name: {{ .Release.Name }}-config
+        - name: gpuType
+          valueFrom:
+            configMapKeyRef:
+              key: ENV_GPU_TYPE
+              name: {{ .Release.Name }}-config
+        - name: ramGB
+          valueFrom:
+            configMapKeyRef:
+              key: ENV_RAM_GB
+              name: {{ .Release.Name }}-config
+        - name: diskGB
+          valueFrom:
+            configMapKeyRef:
+              key: ENV_DISK_GB
+              name: {{ .Release.Name }}-config
+        - name: priceMinute
+          valueFrom:
+            configMapKeyRef:
+              key: ENV_PRICE_MINUTE
+              name: {{ .Release.Name }}-config
+        - name: description
+          valueFrom:
+            configMapKeyRef:
+              key: ENV_DESCRIPTION
+              name: {{ .Release.Name }}-config
+        - name: storageExpiry
+          valueFrom:
+            configMapKeyRef:
+              key: ENV_STORAGE_EXPIRY
               name: {{ .Release.Name }}-config
         - name: POSTGRES_DB
           valueFrom:

@@ -164,7 +164,7 @@ spec:
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
         volumeMounts:
-        - name: env-file
+        - name: dockerenv-file
           mountPath: /.dockerenv
           subPath: .dockerenv
         {{- if .Values.secretstore.enabled }}
@@ -172,8 +172,9 @@ spec:
           mountPath: /mnt/secrets-store/
           readOnly: true
         {{- end }}
+
       volumes:
-      - name: env-file
+      - name: dockerenv-file
         configMap:
           name: {{ .Release.Name }}-config
       {{- if .Values.secretstore.enabled }}
@@ -186,6 +187,8 @@ spec:
       {{- end }}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
+      # serviceAccount: {{ .Release.Name }}
+      # serviceAccountName: {{ .Release.Name }}
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30

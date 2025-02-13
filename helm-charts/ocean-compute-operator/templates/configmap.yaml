@@ -18,6 +18,15 @@ data:
   LOG_LEVEL: {{ .Values.config.log.level }}
   SERVICE_ACCOUNT: {{ .Values.config.serviceAccount }}
   MAX_JOB_DURATION: {{ .Values.config.maxJobDuration | quote  }}
+  ENV_N_CPU: {{ .Values.config.env.nCpu | quote  }}
+  ENV_CPU_TYPE: {{ .Values.config.env.cpuType | quote  }}
+  ENV_GPU_RAM: {{ .Values.config.env.gpuRam | quote  }}
+  ENV_GPU_TYPE: {{ .Values.config.env.gpuType | quote  }}
+  ENV_RAM_GB: {{ .Values.config.env.ramGB | quote  }}
+  ENV_DISK_GB: {{ .Values.config.env.diskGB | quote  }}
+  ENV_PRICE_MINUTE: {{ .Values.config.env.priceMinute | quote  }}
+  ENV_DESCRIPTION: {{ .Values.config.env.description | quote  }}
+  ENV_STORAGE_EXPIRY: {{ .Values.config.env.storageExpiry | quote  }}
 kind: ConfigMap
 metadata:
   annotations:

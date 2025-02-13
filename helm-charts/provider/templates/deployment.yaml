@@ -16,6 +16,10 @@ spec:
     metadata:
       labels:
         app: {{ .Release.Name }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        checksum/secret-providerclass: {{ include (print $.Template.BasePath "/secret-providerclass.yaml") . | sha256sum }}
     spec:
       containers:
       - env:
@@ -35,6 +39,11 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: RBAC_SERVER_URL
+              name: {{ .Release.Name }}-config
+        - name: PROVIDER_MANAGEMENT_URL
+          valueFrom:
+            configMapKeyRef:
+              key: PROVIDER_MANAGEMENT_URL
               name: {{ .Release.Name }}-config
         - name: NETWORK_URL
           valueFrom:
@@ -91,6 +100,11 @@ spec:
             configMapKeyRef:
               key: PROVIDER_FEE_TOKEN
               name: {{ .Release.Name }}-config
+        - name: UNIVERSAL_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              key: UNIVERSAL_PRIVATE_KEY
+              name: {{ .Release.Name }}-secret-config
         {{- if .Values.secret.redisConnection }}
         - name: REDIS_CONNECTION
           valueFrom:
